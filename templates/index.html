@@ -1,33 +1,38 @@
-{% extends "layout.html" %} {% block title %}Welcome to Data Logger API{%
-endblock %} {% block content %}
-<div class="container mt-5">
-  <h1>Manage, Monitor, and Debug Like a Pro</h1>
-  <p>
-    Welcome to Data Logger API, your ultimate tool for managing, monitoring, and
-    debugging your applications.
+{% extends "layout.html" %}
+{% block title %}Welcome to GameStudy - Study Smarter{% endblock %}
+{% block content %}
+<div class="text-center" style="max-width: 700px; margin: 3rem auto;">
+  <h1 class="display-4 mb-3" style="color: #10b981; text-shadow: 0 0 10px #10b981;">
+    Level Up Your Learning with GameStudy
+  </h1>
+  <p class="lead mb-4" style="color: #374151;">
+    Turn studying into a game! Track your progress, earn rewards, and stay motivated to master any subject.
   </p>
-  <div class="mt-4">
-    <a href="{{ url_for('login') }}" class="btn btn-primary">Log In</a>
-    <a href="{{ url_for('signup') }}" class="btn btn-secondary">Sign Up</a>
+
+  <div class="d-flex justify-content-center gap-3 mb-5">
+    <a href="{{ url_for('login') }}" class="btn btn-success btn-lg px-4 shadow-sm">
+      🎯 Log In
+    </a>
+    <a href="{{ url_for('signup') }}" class="btn btn-outline-success btn-lg px-4 shadow-sm">
+      🚀 Sign Up
+    </a>
   </div>
 
-  <div class="mt-4">
-    <!-- Privacy Policy Link -->
-    <p>
-      By using our services, you agree to our
-      <a href="{{ url_for('privacy') }}">Privacy Policy</a>.
-    </p>
-  </div>
-
-  <div class="mt-5">
-    <h2>Sample Log</h2>
-    <ul class="list-group">
-      <li class="list-group-item">
-        <strong>2023-10-01 12:00:00 - John Doe - Sample Project</strong><br />
-        Sample log content goes here.<br />
-        <pre>Sample code snippet...</pre>
-      </li>
+  <section style="background: #e6fffa; border-radius: 12px; padding: 2rem;">
+    <h3 style="color: #065f46;">Why Choose GameStudy?</h3>
+    <ul class="list-unstyled" style="color: #065f46; font-weight: 600;">
+      <li>⭐ Gamified study sessions to keep you engaged</li>
+      <li>📊 Real-time progress tracking and stats</li>
+      <li>🏆 Earn badges and rewards for achievements</li>
+      <li>🤝 Join study groups and challenge friends</li>
     </ul>
-  </div>
+  </section>
+
+  <p class="mt-4" style="color: #6b7280;">
+    By continuing, you agree to our
+    <a href="{{ url_for('privacy') }}" style="color: #10b981; text-decoration: underline;">
+      Privacy Policy
+    </a>.
+  </p>
 </div>
 {% endblock %}

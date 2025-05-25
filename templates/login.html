@@ -1,5 +1,6 @@
-{% extends "layout.html" %} {% block title %}Login{% endblock %} {% block
-content %}
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
 <div class="container mt-5">
   <h1>Login</h1>
   {% if error %}
@@ -28,9 +29,7 @@ content %}
       />
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
-    <a href="{{ url_for('forgot_password') }}" class="btn btn-link"
-      >Forgot Password?</a
-    >
+    <a href="{{ url_for('forgot_password') }}" class="btn btn-link">Forgot Password?</a>
   </form>
 </div>
 {% endblock %}

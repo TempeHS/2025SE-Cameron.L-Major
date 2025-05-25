@@ -37,8 +37,6 @@ SAFE_DIRECT_URLS = [
     "/reset_password",
     "/verify_2fa"
     "/dashboard",
-    "/create_log",
-    "/edit_log",
     "/update_profile"
 ]
 

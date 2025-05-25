@@ -3,72 +3,125 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}Data Logger API{% endblock %}</title>
+    <title>{% block title %}GameStudy - Study Smarter{% endblock %}</title>
 
-    <!-- Google Font -->
+    <!-- Google Fonts: Poppins & Roboto -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto&display=swap"
       rel="stylesheet"
     />
 
     <!-- Bootstrap CSS -->
-    <link
-      href="{{ url_for('static', filename='css/bootstrap.min.css') }}"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{{ url_for('static', filename='css/style.css') }}"
-    />
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}?v=2" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
+
     <style>
-      /* Navbar color and font improvements */
+      /* Base styling */
+      body {
+        font-family: 'Poppins', 'Roboto', sans-serif;
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        color: #f0f4f8;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Navbar styling */
       .navbar {
-        font-family: "Roboto", sans-serif;
-        background-color: #ffffff;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .navbar .navbar-nav .nav-link {
-        color: #333333 !important;
-      }
-
-      .navbar .navbar-nav .nav-link:hover {
-        color: #000 !important;
-      }
-
-      .navbar .navbar-brand {
-        color: #000 !important;
+        background: #0f172a; /* darker blue/gray for gaming vibe */
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
         font-weight: 700;
       }
 
-      .navbar .navbar-brand:hover {
-        color: #000 !important;
+      .navbar-brand {
+        color: #10b981 !important; /* bright green accent */
+        font-size: 1.75rem;
+        letter-spacing: 2px;
+        font-weight: 900;
+        text-shadow: 0 0 5px #10b981;
+        display: flex;
+        align-items: center;
+      }
+      .navbar-brand::before {
+        content: '🎮';
+        margin-right: 0.5rem;
+        font-size: 1.8rem;
       }
 
-      /* Spacing and layout for main content */
-      main {
-        font-family: "Roboto", sans-serif;
-        padding: 20px;
+      .navbar-nav .nav-link {
+        color: #a5b4fc !important; /* soft lavender */
+        font-weight: 600;
+        transition: color 0.25s ease, text-shadow 0.25s ease;
+      }
+      .navbar-nav .nav-link:hover {
+        color: #10b981 !important;
+        text-shadow: 0 0 5px #10b981;
+        text-decoration: none;
       }
 
-      .container {
-        max-width: 1200px;
-        margin: 0 auto;
+      .navbar-toggler {
+        border-color: #10b981;
+      }
+
+      .navbar-toggler-icon {
+        filter: invert(56%) sepia(94%) saturate(672%) hue-rotate(76deg) brightness(100%) contrast(92%);
+      }
+
+      /* Main container */
+      main.container {
+        flex-grow: 1;
+        padding: 3rem 2rem;
+        max-width: 960px;
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 12px;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        margin: 2rem auto;
+        backdrop-filter: blur(10px);
+      }
+
+      /* Footer styling */
+      footer {
+        background: #0f172a;
+        color: #10b981;
+        padding: 1.5rem 0;
+        text-align: center;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        margin-top: auto;
+        box-shadow: 0 -3px 10px rgba(16, 185, 129, 0.3);
+      }
+
+      /* Scrollbar for content if needed */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #10b981;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
       }
     </style>
   </head>
 
   <body>
     {% if not hide_navbar %}
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-      <div class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('home') }}">ProjectLogger</a>
+    <nav class="navbar navbar-expand-lg sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('home') }}">GameStudy</a>
         <button
           class="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
+          aria-controls="navbarNav"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
         >
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -79,9 +132,7 @@
             </li>
             {% if session['username'] %}
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('dashboard') }}"
-                >Dashboard</a
-              >
+              <a class="nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
@@ -100,9 +151,15 @@
     </nav>
     {% endif %}
 
-    <main class="container mt-4">{% block content %}{% endblock %}</main>
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
 
-    <!-- Bootstrap JavaScript -->
+    <footer>
+      &copy; 2025 GameStudy &mdash; Study Smarter, Not Harder.
+    </footer>
+
+    <!-- Bootstrap JavaScript Bundle -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
   </body>
 </html>
