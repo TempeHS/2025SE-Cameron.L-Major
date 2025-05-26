@@ -21,12 +21,9 @@ def register_main_routes(app):
         if 'username' in session:
             username = session['username']
             email = session['email']
-            role = session['role']
             
-            logs = dbHandler.get_recent_logs(username)
-            stats = dbHandler.get_user_stats(username)
             
-            return render_template("dashboard.html", username=username, email=email, role=role, logs=logs, stats=stats)
+            return render_template("dashboard.html", username=username, email=email)
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))
@@ -77,23 +74,10 @@ def register_main_routes(app):
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
-        
-        page = request.args.get('page', 1, type=int)
-        per_page = 5
-        logs = dbHandler.get_logs_paginated(page, per_page)
-        total_logs = dbHandler.get_total_logs_count()
-        
-        if not logs:
-            logs = []  # Default to empty if no logs found
 
         return render_template("home_logged_in.html", 
                             username=session['username'], 
-                            email=session['email'], 
-                            role=session['role'], 
-                            logs=logs, 
-                            page=page, 
-                            per_page=per_page, 
-                            total_logs=total_logs)
+                            email=session['email'], )
 
     @app.route("/search_logs", methods=["GET"])
     def search_logs():
@@ -113,7 +97,7 @@ def register_main_routes(app):
         logs = dbHandler.search_logs(developer, date, project, sort_by, sort_order)
         total_logs = len(logs)  # Assuming search_logs returns all matching logs
         print(f"Logs passed to template: {logs}")  # Debug print
-        return render_template("home_logged_in.html", username=session['username'], email=session['email'], role=session['role'], logs=logs, page=page, per_page=per_page, total_logs=total_logs)
+        return render_template("home_logged_in.html", username=session['username'], email=session['email'], logs=logs, page=page, per_page=per_page, total_logs=total_logs)
 
     @app.route("/edit_log/<int:log_id>", methods=["GET", "POST"])
     def edit_log(log_id):

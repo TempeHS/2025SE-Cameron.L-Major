@@ -117,7 +117,6 @@ def register_auth_routes(app):
     @app.route("/login", methods=["GET", "POST"])
     @limiter.limit("5 per minute")
     def login():
-        """Handle user login."""
         if request.method == "POST":
             try:
                 validate_csrf(request.form['csrf_token'])
@@ -129,22 +128,23 @@ def register_auth_routes(app):
             password = request.form["password"]
             if "@" in username_or_email:
                 user = dbHandler.get_user_by_email(username_or_email)
-            else:
+            else:  
                 user = dbHandler.get_user(username_or_email)
 
             if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
-                session['username'] = user['username']
-                session['email'] = user['email']
-                log_user_login(user['username'])  
+                # Do NOT set session['username'] here!
+                session['pending_2fa_user'] = user['username']
+                session['pending_2fa_email'] = user['email']
                 flash("Enter your 2FA code.")
                 return redirect(url_for('verify_2fa'))
             else:
                 flash("Invalid username/email or password")
                 return render_template("login.html", error="Invalid username/email or password")
         return render_template("login.html")
-
+        
     @app.route("/verify_2fa", methods=["GET", "POST"])
     def verify_2fa():
+        print("SESSION:", dict(session))  # Debug
         if request.method == "POST":
             try:
                 validate_csrf(request.form['csrf_token'])
@@ -153,24 +153,30 @@ def register_auth_routes(app):
                 return render_template("verify_2fa.html", error="CSRF token is missing or invalid.", hide_navbar=True)
 
             code = basic_sanitize_input(request.form["code"])
-            username = session.get('username')
+            username_or_email = session.get('pending_2fa_user')
 
-            if not username:
+            if not username_or_email:
                 flash("Session expired. Please log in again.")
                 return redirect(url_for('login'))
 
-            user = dbHandler.get_user(username)
+            # Detect if it's an email or username
+            if "@" in username_or_email:
+                user = dbHandler.get_user_by_email(username_or_email)
+            else:
+                user = dbHandler.get_user(username_or_email)
+
             if not user:
                 flash("User not found.")
                 return redirect(url_for('login'))
 
             totp = pyotp.TOTP(user['totp_secret'])
 
-            if totp.verify(code, valid_window=0):  # Strict match only
+            if totp.verify(code, valid_window=1):
                 session.permanent = True
                 session['username'] = user['username']
                 session['email'] = user['email']
-                session['role'] = user['role']
+                session.pop('pending_2fa_user', None)
+                session.pop('pending_2fa_email', None)
                 flash("Login successful!")
                 return redirect(url_for('dashboard'))
             else:
@@ -178,9 +184,6 @@ def register_auth_routes(app):
                 return render_template("verify_2fa.html", error="Invalid 2FA code", hide_navbar=True)
 
         return render_template("verify_2fa.html", hide_navbar=True)
-
-
-
     @app.route("/logout")
     def logout():
         """Handle user logout."""
