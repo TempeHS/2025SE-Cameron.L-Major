@@ -1,15 +1,91 @@
 {% extends "layout.html" %}
 {% block title %}Welcome to GameStudy - Study Smarter{% endblock %}
 {% block content %}
-<div class="text-center" style="max-width: 700px; margin: 3rem auto;">
-  <h1 class="display-4 mb-3" style="color: #10b981; text-shadow: 0 0 10px #10b981;">
+<style>
+  .gs-hero-logo {
+    display: block;
+    margin: 2rem auto 1.5rem auto;
+    height: 5rem;
+    width: auto;
+    filter: drop-shadow(0 0 12px #10b98188);
+    transition: transform 0.2s;
+  }
+  .gs-hero-logo:hover {
+    transform: scale(1.07) rotate(-3deg);
+    filter: drop-shadow(0 0 24px #10b981cc);
+  }
+  .gs-hero-section {
+    max-width: 700px;
+    margin: 3rem auto;
+    background: rgba(16, 185, 129, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(16, 185, 129, 0.12);
+    padding: 2.5rem 2rem 2rem 2rem;
+  }
+  .gs-hero-title {
+    color: #10b981;
+    text-shadow: 0 0 10px #10b981;
+    font-size: 2.7rem;
+    font-weight: 900;
+    margin-bottom: 1.2rem;
+    letter-spacing: 1px;
+  }
+  .gs-hero-lead {
+    color: #374151;
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+  .gs-btn-group .btn {
+    font-size: 1.15rem;
+    min-width: 140px;
+    margin: 0 0.5rem;
+    box-shadow: 0 2px 8px #10b98133;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .gs-btn-group .btn:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 4px 16px #10b98155;
+  }
+  .gs-feature-section {
+    background: #e6fffa;
+    border-radius: 12px;
+    padding: 2rem;
+    margin-top: 2rem;
+    box-shadow: 0 2px 12px #10b98122;
+  }
+  .gs-feature-section h3 {
+    color: #065f46;
+    font-weight: 800;
+    margin-bottom: 1rem;
+  }
+  .gs-feature-section ul {
+    color: #065f46;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0;
+  }
+  .gs-privacy-link {
+    color: #10b981;
+    text-decoration: underline;
+    font-weight: 600;
+  }
+  .gs-privacy-link:hover {
+    color: #059669;
+    text-decoration: underline;
+  }
+</style>
+
+<div class="gs-hero-section text-center">
+  <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="GameStudy Logo" class="gs-hero-logo" />
+  <h1 class="gs-hero-title">
     Level Up Your Learning with GameStudy
   </h1>
-  <p class="lead mb-4" style="color: #374151;">
+  <p class="gs-hero-lead">
     Turn studying into a game! Track your progress, earn rewards, and stay motivated to master any subject.
   </p>
 
-  <div class="d-flex justify-content-center gap-3 mb-5">
+  <div class="gs-btn-group d-flex justify-content-center gap-3 mb-5">
     <a href="{{ url_for('login') }}" class="btn btn-success btn-lg px-4 shadow-sm">
       🎯 Log In
     </a>
@@ -18,9 +94,9 @@
     </a>
   </div>
 
-  <section style="background: #e6fffa; border-radius: 12px; padding: 2rem;">
-    <h3 style="color: #065f46;">Why Choose GameStudy?</h3>
-    <ul class="list-unstyled" style="color: #065f46; font-weight: 600;">
+  <section class="gs-feature-section">
+    <h3>Why Choose GameStudy?</h3>
+    <ul class="list-unstyled">
       <li>⭐ Gamified study sessions to keep you engaged</li>
       <li>📊 Real-time progress tracking and stats</li>
       <li>🏆 Earn badges and rewards for achievements</li>
@@ -30,7 +106,7 @@
 
   <p class="mt-4" style="color: #6b7280;">
     By continuing, you agree to our
-    <a href="{{ url_for('privacy') }}" style="color: #10b981; text-decoration: underline;">
+    <a href="{{ url_for('privacy') }}" class="gs-privacy-link">
       Privacy Policy
     </a>.
   </p>

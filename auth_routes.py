@@ -35,7 +35,7 @@ SAFE_DIRECT_URLS = [
     "/signup",
     "/forgot_password",
     "/reset_password",
-    "/verify_2fa"
+    "/verify_2fa",
     "/dashboard",
     "/update_profile"
 ]
@@ -72,7 +72,6 @@ def register_auth_routes(app):
             email = basic_sanitize_input(request.form["email"])
             username = basic_sanitize_input(request.form["username"])
             password = request.form["password"]
-            role = basic_sanitize_input(request.form["role"])
 
             # Validate inputs
             if not validate_email(email):
@@ -101,7 +100,7 @@ def register_auth_routes(app):
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
             totp_secret = pyotp.random_base32()
-            dbHandler.add_user(email, username, hashed_password.decode('utf-8'), role, totp_secret)
+            dbHandler.add_user(email, username, hashed_password.decode('utf-8'), totp_secret)
 
             qr_code_dir = os.path.join(current_app.static_folder, 'qr_codes')
             if not os.path.exists(qr_code_dir):
@@ -136,7 +135,6 @@ def register_auth_routes(app):
             if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
                 session['username'] = user['username']
                 session['email'] = user['email']
-                session['role'] = user['role']
                 log_user_login(user['username'])  
                 flash("Enter your 2FA code.")
                 return redirect(url_for('verify_2fa'))
@@ -147,7 +145,6 @@ def register_auth_routes(app):
 
     @app.route("/verify_2fa", methods=["GET", "POST"])
     def verify_2fa():
-        """Handle 2FA verification."""
         if request.method == "POST":
             try:
                 validate_csrf(request.form['csrf_token'])
@@ -157,9 +154,19 @@ def register_auth_routes(app):
 
             code = basic_sanitize_input(request.form["code"])
             username = session.get('username')
+
+            if not username:
+                flash("Session expired. Please log in again.")
+                return redirect(url_for('login'))
+
             user = dbHandler.get_user(username)
+            if not user:
+                flash("User not found.")
+                return redirect(url_for('login'))
+
             totp = pyotp.TOTP(user['totp_secret'])
-            if totp.verify(code):
+
+            if totp.verify(code, valid_window=0):  # Strict match only
                 session.permanent = True
                 session['username'] = user['username']
                 session['email'] = user['email']
@@ -169,14 +176,16 @@ def register_auth_routes(app):
             else:
                 flash("Invalid 2FA code")
                 return render_template("verify_2fa.html", error="Invalid 2FA code", hide_navbar=True)
+
         return render_template("verify_2fa.html", hide_navbar=True)
+
+
 
     @app.route("/logout")
     def logout():
         """Handle user logout."""
         session.pop('username', None)
         session.pop('email', None)
-        session.pop('role', None)
         flash("You have been logged out.")
         return redirect(url_for('login'))
 
@@ -294,7 +303,6 @@ def register_auth_routes(app):
         output = BytesIO()
         output.write(f"Username: {user['username']}\n".encode())
         output.write(f"Email: {user['email']}\n".encode())
-        output.write(f"Role: {user['role']}\n\n".encode())
         output.write("Logs:\n".encode())
 
         for log in logs:

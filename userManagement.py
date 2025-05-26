@@ -35,7 +35,7 @@ def get_user(username):
     user = cursor.fetchone()
     conn.close()
     if user:
-        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "role": user[4], "totp_secret": user[5], "is_verified": user[6]}
+        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
     return None
 
 def get_user_by_email(email):
@@ -46,17 +46,17 @@ def get_user_by_email(email):
     user = cursor.fetchone()
     conn.close()
     if user:
-        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "role": user[4], "totp_secret": user[5], "is_verified": user[6]}
+        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
     return None
 
-def add_user(email, username, password, role, totp_secret):
+def add_user(email, username, password, totp_secret):
     """Add a new user to the database."""
     try:
         conn = sqlite3.connect('.databaseFiles/database.db')
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO users (email, username, password, role, totp_secret, is_verified) VALUES (?, ?, ?, ?, ?, ?)",
-            (email, username, password, role, totp_secret, False)
+            "INSERT INTO users (email, username, password, totp_secret, is_verified) VALUES (?, ?, ?, ?, ?)",
+            (email, username, password, totp_secret, False)
         )
         conn.commit()
         conn.close()
