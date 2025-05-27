@@ -52,20 +52,19 @@
         </div>
       </div>
     </div>
-    <!-- Study Tracker Placeholder -->
+    <!-- Study Tracker with Live Timer -->
     <div class="col-md-6 mb-4">
       <div class="card bg-dark text-light shadow rounded h-100">
         <div class="card-body d-flex flex-column justify-content-center align-items-center">
           <h3 class="card-title" style="color:#10b981;">⏱️ Study Tracker</h3>
-          <div class="w-100 text-center mt-4 mb-3">
-            <span style="font-size:2.5rem; font-weight:700; color:#a5b4fc;">00:00:00</span>
+          <div id="study-timer" class="w-100 text-center mt-4 mb-3">
+            <span id="timer-display" style="font-size:2.5rem; font-weight:700; color:#a5b4fc;">00:00:00</span>
             <div class="mt-3">
-              <button class="btn btn-success btn-sm mx-1" disabled>Start</button>
-              <button class="btn btn-secondary btn-sm mx-1" disabled>Pause</button>
-              <button class="btn btn-danger btn-sm mx-1" disabled>Reset</button>
+              <button id="start-btn" class="btn btn-success btn-sm mx-1">Start</button>
+              <button id="pause-btn" class="btn btn-secondary btn-sm mx-1" disabled>Pause</button>
+              <button id="reset-btn" class="btn btn-danger btn-sm mx-1" disabled>Reset</button>
             </div>
           </div>
-          <p class="card-text text-muted text-center">Track your study sessions here soon!</p>
         </div>
       </div>
     </div>
@@ -79,3 +78,5 @@
   </div>
 </div>
 {% endblock %}
+
+<script src="{{ url_for('static', filename='js/study_timer.js') }}"></script>
