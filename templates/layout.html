@@ -13,88 +13,10 @@
 
     <!-- Bootstrap CSS -->
     <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}?v=2" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}?v=5" />
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
-
-    <style>
-      body {
-        font-family: 'Poppins', 'Roboto', sans-serif;
-        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
-        color: #f0f4f8;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-      .navbar {
-        background: #0f172a;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-        font-weight: 700;
-      }
-      .navbar-brand {
-        color: #10b981 !important;
-        font-size: 1.75rem;
-        letter-spacing: 2px;
-        font-weight: 900;
-        text-shadow: 0 0 5px #10b981;
-        display: flex;
-        align-items: center;
-      }
-      .navbar-brand span.emoji {
-        font-size: 1.5rem;
-        margin-right: 0.5rem;
-        vertical-align: middle;
-        line-height: 1;
-      }
-      .navbar-nav .nav-link {
-        color: #a5b4fc !important;
-        font-weight: 600;
-        transition: color 0.25s ease, text-shadow 0.25s ease;
-      }
-      .navbar-nav .nav-link:hover {
-        color: #10b981 !important;
-        text-shadow: 0 0 5px #10b981;
-        text-decoration: none;
-      }
-      .navbar-toggler {
-        border-color: #10b981;
-      }
-      .navbar-toggler-icon {
-        filter: invert(56%) sepia(94%) saturate(672%) hue-rotate(76deg) brightness(100%) contrast(92%);
-      }
-      main.container {
-        flex-grow: 1;
-        padding: 3rem 2rem;
-        max-width: 960px;
-        background: rgba(15, 23, 42, 0.8);
-        border-radius: 12px;
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        margin: 2rem auto;
-        backdrop-filter: blur(10px);
-      }
-      footer {
-        background: #0f172a;
-        color: #10b981;
-        padding: 1.5rem 0;
-        text-align: center;
-        font-size: 0.9rem;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        margin-top: auto;
-        box-shadow: 0 -3px 10px rgba(16, 185, 129, 0.3);
-      }
-      ::-webkit-scrollbar {
-        width: 8px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #10b981;
-        border-radius: 4px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent;
-      }
-    </style>
   </head>
 
   <body>

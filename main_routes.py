@@ -17,13 +17,12 @@ def register_main_routes(app):
 
     @app.route("/dashboard")
     def dashboard():
-        """Render the user dashboard."""
-        if 'username' in session:
-            username = session['username']
-            email = session['email']
-            
-            
-            return render_template("dashboard.html", username=username, email=email)
+        if 'username' in session and 'email' in session:
+            return render_template(
+                "dashboard.html",
+                username=session['username'],
+                email=session['email']
+            )
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))

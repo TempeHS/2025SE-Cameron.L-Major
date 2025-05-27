@@ -35,7 +35,7 @@ def get_user(username):
     user = cursor.fetchone()
     conn.close()
     if user:
-        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
+        return {"id": user[0], "username": user[1], "email": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
     return None
 
 def get_user_by_email(email):
@@ -46,22 +46,18 @@ def get_user_by_email(email):
     user = cursor.fetchone()
     conn.close()
     if user:
-        return {"id": user[0], "email": user[1], "username": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
+        return {"id": user[0], "username": user[1], "email": user[2], "password": user[3], "totp_secret": user[4], "is_verified": user[5]}
     return None
 
-def add_user(email, username, password, totp_secret):
-    """Add a new user to the database."""
-    try:
-        conn = sqlite3.connect('.databaseFiles/database.db')
-        cursor = conn.cursor()
-        cursor.execute(
-            "INSERT INTO users (email, username, password, totp_secret, is_verified) VALUES (?, ?, ?, ?, ?)",
-            (email, username, password, totp_secret, False)
-        )
-        conn.commit()
-        conn.close()
-    except sqlite3.Error as e:
-        raise DatabaseError(f"Database error: {e}") from e
+def add_user(username, email, password, totp_secret):
+    conn = sqlite3.connect('.databaseFiles/database.db')
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO users (username, email, password, totp_secret, is_verified) VALUES (?, ?, ?, ?, ?)",
+        (username, email, password, totp_secret, False)
+    )
+    conn.commit()
+    conn.close()
 
 def set_totp_secret(username, secret):
     """Set the TOTP secret for a user."""

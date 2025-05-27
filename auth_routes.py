@@ -100,7 +100,7 @@ def register_auth_routes(app):
             hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
             totp_secret = pyotp.random_base32()
-            dbHandler.add_user(email, username, hashed_password.decode('utf-8'), totp_secret)
+            dbHandler.add_user(username, email, hashed_password.decode('utf-8'), totp_secret)
 
             qr_code_dir = os.path.join(current_app.static_folder, 'qr_codes')
             if not os.path.exists(qr_code_dir):

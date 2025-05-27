@@ -1,20 +1,81 @@
 {% extends "layout.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Home{% endblock %}
 {% block content %}
 <div class="container mt-5">
-  <h1 class="mb-4" style="color:#10b981; font-weight:900;">📚 Study Dashboard</h1>
+  <h1 class="mb-4" style="color:#10b981; font-weight:900;">🎮 Welcome to GameStudy!</h1>
   <div class="alert alert-info mt-4" role="alert">
-    Welcome to your GameStudy dashboard!<br>
-    You haven't started logging study sessions yet.<br>
-    Use the navigation above to explore features or start your first study session.
+    You're logged in! Use the navigation above to explore your study tools.
+  </div>
+  <div class="row mt-5">
+    <!-- Leaderboard Placeholder -->
+    <div class="col-md-6 mb-4">
+      <div class="card bg-dark text-light shadow rounded h-100">
+        <div class="card-body">
+          <h3 class="card-title text-center" style="color:#a5b4fc;">🏆 Leaderboard (Study Time)</h3>
+          <table class="table table-dark table-striped rounded mt-3">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>User</th>
+                <th>Study Time (hrs)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><span style="color:#10b981;">study_champ</span></td>
+                <td>42</td>
+              </tr>
+              <tr>
+                <td>2</td>
+                <td>quizmaster</td>
+                <td>36</td>
+              </tr>
+              <tr>
+                <td>3</td>
+                <td>flashcardfan</td>
+                <td>29</td>
+              </tr>
+              <tr>
+                <td>4</td>
+                <td>you</td>
+                <td>12</td>
+              </tr>
+              <tr>
+                <td>5</td>
+                <td>newbie</td>
+                <td>7</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="card-text text-muted text-center mt-2">Leaderboard feature coming soon!</p>
+        </div>
+      </div>
+    </div>
+    <!-- Study Tracker Placeholder -->
+    <div class="col-md-6 mb-4">
+      <div class="card bg-dark text-light shadow rounded h-100">
+        <div class="card-body d-flex flex-column justify-content-center align-items-center">
+          <h3 class="card-title" style="color:#10b981;">⏱️ Study Tracker</h3>
+          <div class="w-100 text-center mt-4 mb-3">
+            <span style="font-size:2.5rem; font-weight:700; color:#a5b4fc;">00:00:00</span>
+            <div class="mt-3">
+              <button class="btn btn-success btn-sm mx-1" disabled>Start</button>
+              <button class="btn btn-secondary btn-sm mx-1" disabled>Pause</button>
+              <button class="btn btn-danger btn-sm mx-1" disabled>Reset</button>
+            </div>
+          </div>
+          <p class="card-text text-muted text-center">Track your study sessions here soon!</p>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="text-center mt-5">
     <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="GameStudy Logo" style="height:5rem;filter:drop-shadow(0 0 12px #10b98188);" />
     <h2 class="mt-4" style="color:#10b981;font-weight:800;">Ready to Level Up Your Learning?</h2>
-    <p class="lead" style="color:#374151;">
+    <p class="lead" style="color:#bfc9d1;">
       Track your study progress, set goals, and earn rewards as you learn!
     </p>
-    <a href="{{ url_for('dashboard') }}" class="btn btn-success btn-lg mt-3">Go to Dashboard</a>
   </div>
 </div>
 {% endblock %}
