@@ -4,6 +4,19 @@ let timerInterval;
 let elapsedSeconds = 0;
 let running = false;
 
+function sendStudyTimeToServer(seconds) {
+  fetch("/log_study_time", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ seconds: seconds }),
+  })
+    .then(response => response.json())
+    .then(data => console.log("Study time logged:", data))
+    .catch(error => console.error("Error:", error));
+}
+
 function updateDisplay() {
   const hours = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
   const minutes = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0');
@@ -29,65 +42,115 @@ function logStudyTimerEvent(event) {
   .catch(err => console.error("Failed to log event:", err));
 }
 
+// Save state to localStorage
+function saveState() {
+  localStorage.setItem('studyTimerElapsed', elapsedSeconds);
+  localStorage.setItem('studyTimerRunning', running ? '1' : '0');
+}
+
+// Load state from localStorage
+function loadState() {
+  const savedElapsed = localStorage.getItem('studyTimerElapsed');
+  const savedRunning = localStorage.getItem('studyTimerRunning');
+
+  if (savedElapsed !== null) {
+    elapsedSeconds = parseInt(savedElapsed, 10) || 0;
+  }
+
+  running = savedRunning === '1';
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log("DOM fully loaded");
   const startBtn = document.getElementById('start-btn');
   const pauseBtn = document.getElementById('pause-btn');
   const resetBtn = document.getElementById('reset-btn');
+  const saveBtn = document.getElementById('save-btn');  // new save button
   const fullscreenBtn = document.getElementById('fullscreen-btn');
   const timerDiv = document.getElementById('study-timer');
 
-  console.log("Timer elements:", {startBtn, pauseBtn, resetBtn, fullscreenBtn, timerDiv});
+  console.log("Timer elements:", {startBtn, pauseBtn, resetBtn, saveBtn, fullscreenBtn, timerDiv});
 
-  if (startBtn && pauseBtn && resetBtn) {
+  if (startBtn && pauseBtn && resetBtn && saveBtn) {
+    // Load previous state
+    loadState();
+    updateDisplay();
+
+    // Enable/disable buttons based on state
+    function updateButtons() {
+      startBtn.disabled = running;
+      pauseBtn.disabled = !running;
+      resetBtn.disabled = elapsedSeconds === 0;
+      saveBtn.disabled = elapsedSeconds === 0;
+    }
+
+    if (running) {
+      timerInterval = setInterval(() => {
+        elapsedSeconds++;
+        updateDisplay();
+        saveState();
+        updateButtons();
+      }, 1000);
+    } else {
+      updateButtons();
+    }
+
     startBtn.onclick = function() {
-      console.log("Start button clicked!");
       if (!running) {
         running = true;
         timerInterval = setInterval(() => {
           elapsedSeconds++;
-          console.log("Timer tick:", elapsedSeconds);
           updateDisplay();
+          saveState();
+          updateButtons();
         }, 1000);
-        pauseBtn.disabled = false;
-        resetBtn.disabled = false;
-        this.disabled = true;
+        updateButtons();
+        saveState();
         logStudyTimerEvent('start');
       }
     };
 
     pauseBtn.onclick = function() {
-      console.log("Pause button clicked!");
       if (running) {
         running = false;
         clearInterval(timerInterval);
-        startBtn.disabled = false;
-        this.disabled = true;
+        updateButtons();
+        saveState();
         logStudyTimerEvent('pause');
       }
     };
 
     resetBtn.onclick = function() {
-      console.log("Reset button clicked!");
       running = false;
       clearInterval(timerInterval);
       elapsedSeconds = 0;
       updateDisplay();
-      startBtn.disabled = false;
-      pauseBtn.disabled = true;
-      this.disabled = true;
+      updateButtons();
+      saveState();
       logStudyTimerEvent('reset');
     };
 
-    updateDisplay();
+    saveBtn.onclick = function() {
+      if (elapsedSeconds > 0) {
+        sendStudyTimeToServer(elapsedSeconds);
+        // Optionally reset timer after save
+        running = false;
+        clearInterval(timerInterval);
+        elapsedSeconds = 0;
+        updateDisplay();
+        updateButtons();
+        saveState();
+        logStudyTimerEvent('save');
+      }
+    };
+
   } else {
     console.error("One or more timer buttons not found in DOM.");
   }
 
-  // Fullscreen logic
+  // Fullscreen logic unchanged...
   if (fullscreenBtn && timerDiv) {
     fullscreenBtn.onclick = function() {
-      console.log("Fullscreen button clicked!");
       if (!document.fullscreenElement) {
         timerDiv.requestFullscreen();
         logStudyTimerEvent('fullscreen_enter');
@@ -100,10 +163,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.addEventListener('fullscreenchange', function() {
       if (document.fullscreenElement) {
         fullscreenBtn.textContent = "Exit Fullscreen";
-        console.log("Entered fullscreen mode.");
       } else {
         fullscreenBtn.textContent = "Fullscreen";
-        console.log("Exited fullscreen mode.");
       }
     });
   } else {

@@ -4,6 +4,7 @@ import userManagement as dbHandler
 import bcrypt
 from utils import validate_password, basic_sanitize_input
 from flask_wtf.csrf import validate_csrf
+import sqlite3
 
 def register_main_routes(app):
     @app.route("/", methods=["GET"])
@@ -15,17 +16,33 @@ def register_main_routes(app):
         else:
             return render_template("index.html")
 
+
+
     @app.route("/dashboard")
     def dashboard():
         if 'username' in session and 'email' in session:
+            conn = sqlite3.connect('.databaseFiles/database.db')
+            conn.row_factory = sqlite3.Row
+            cur = conn.cursor()
+            cur.execute("SELECT total_study_time FROM users WHERE username = ?", (session['username'],))
+            user = cur.fetchone()
+            conn.close()
+
+            total_seconds = user["total_study_time"] if user and user["total_study_time"] is not None else 0
+            hours = total_seconds // 3600
+            minutes = (total_seconds % 3600) // 60
+
             return render_template(
                 "dashboard.html",
                 username=session['username'],
-                email=session['email']
+                email=session['email'],
+                study_hours=hours,
+                study_minutes=minutes
             )
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))
+
         
     @app.route("/analytics")
     def analytics():
@@ -220,3 +237,25 @@ def register_main_routes(app):
         with open('security_log.log', 'a') as f:
             f.write(f"[{datetime.now()}] User: {username}, Event: {event}\n")
         return {'status': 'ok'}
+
+    @app.route("/log_study_time", methods=["POST"])
+    def log_study_time():
+        if 'username' not in session:
+            return jsonify({"error": "Not logged in"}), 401
+
+        data = request.get_json()
+        seconds = data.get("seconds")
+
+        if not isinstance(seconds, int):
+            return jsonify({"error": "Invalid data"}), 400
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            "UPDATE users SET total_study_time = COALESCE(total_study_time, 0) + ? WHERE username = ?",
+            (seconds, session['username'])
+        )
+        conn.commit()
+        conn.close()
+
+        return jsonify({"success": True, "added": seconds})

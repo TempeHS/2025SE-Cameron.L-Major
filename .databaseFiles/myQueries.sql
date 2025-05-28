@@ -28,3 +28,6 @@
     FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
 --);
 
+--ALTER TABLE users ADD COLUMN total_study_time INTEGER;
+
+--UPDATE users SET total_study_time = 0 WHERE total_study_time IS NULL;

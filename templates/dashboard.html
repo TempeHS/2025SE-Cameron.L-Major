@@ -5,7 +5,7 @@
   <h1 style="color:#10b981;">Welcome, {{ username }}!</h1>
   <p style="color:#bfc9d1;">This is your dashboard.</p>
   <div class="row">
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
       <h3 style="color:#a5b4fc;">User Information</h3>
       <ul class="list-group bg-dark rounded shadow">
         <li class="list-group-item bg-dark text-light border-secondary">
@@ -16,7 +16,7 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
       <h3 style="color:#a5b4fc;">Navigation</h3>
       <ul class="list-group bg-dark rounded shadow">
         <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/profile">Profile</a></li>
@@ -26,10 +26,18 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-4 mb-4">
+    <div class="col-md-3 mb-4">
       <h3 style="color:#a5b4fc;">Notifications</h3>
       <ul class="list-group bg-dark rounded shadow">
         <li class="list-group-item bg-dark text-light border-secondary">No new notifications</li>
+      </ul>
+    </div>
+    <div class="col-md-3 mb-4">
+      <h3 style="color:#a5b4fc;">Study Time</h3>
+      <ul class="list-group bg-dark rounded shadow">
+        <li class="list-group-item bg-dark text-light border-secondary">
+          <strong>Total Study Time:</strong> {{ study_hours }} hour{% if study_hours != 1 %}s{% endif %} and {{ study_minutes }} minute{% if study_minutes != 1 %}s{% endif %}
+        </li>
       </ul>
     </div>
   </div>
