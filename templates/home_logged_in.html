@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
+
 {% block title %}Home{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
   <h1 class="mb-4" style="color:#10b981; font-weight:900;">🎮 Welcome to GameStudy!</h1>
@@ -52,6 +54,7 @@
         </div>
       </div>
     </div>
+
     <!-- Study Tracker with Live Timer -->
     <div class="col-md-6 mb-4">
       <div class="card bg-dark text-light shadow rounded h-100">
@@ -63,12 +66,14 @@
               <button id="start-btn" class="btn btn-success btn-sm mx-1">Start</button>
               <button id="pause-btn" class="btn btn-secondary btn-sm mx-1" disabled>Pause</button>
               <button id="reset-btn" class="btn btn-danger btn-sm mx-1" disabled>Reset</button>
+              <button id="fullscreen-btn" class="btn btn-primary btn-sm mx-1">Fullscreen</button>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <div class="text-center mt-5">
     <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="GameStudy Logo" style="height:5rem;filter:drop-shadow(0 0 12px #10b98188);" />
     <h2 class="mt-4" style="color:#10b981;font-weight:800;">Ready to Level Up Your Learning?</h2>
@@ -79,4 +84,6 @@
 </div>
 {% endblock %}
 
-<script src="{{ url_for('static', filename='js/study_timer.js') }}"></script>
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/study_timer.js') }}"></script>
+{% endblock %}

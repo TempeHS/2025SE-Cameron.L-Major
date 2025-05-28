@@ -50,9 +50,9 @@ def set_csp(response):
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
         "script-src 'self' https://code.jquery.com https://cdn.jsdelivr.net; "
-        "style-src 'self' https://stackpath.bootstrapcdn.com; "
-        "img-src 'self'; "
-        "font-src 'self'; "
+        "style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com https://fonts.googleapis.com; "
+        "img-src 'self' data:; "
+        "font-src 'self' https://fonts.gstatic.com; "
         "connect-src 'self'; "
         "frame-src 'self'; "
         "object-src 'none'; "

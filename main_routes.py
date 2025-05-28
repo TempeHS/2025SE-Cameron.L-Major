@@ -208,3 +208,15 @@ def register_main_routes(app):
             flash(f"An error occurred: {e}")
         
         return redirect(url_for('profile'))
+
+
+        from flask import request
+
+    @app.route('/log_study_timer_event', methods=['POST'])
+    def log_study_timer_event():
+        data = request.json
+        event = data.get('event')
+        username = session.get('username', 'anonymous')
+        with open('security_log.log', 'a') as f:
+            f.write(f"[{datetime.now()}] User: {username}, Event: {event}\n")
+        return {'status': 'ok'}
