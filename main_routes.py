@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, jsonify
 from datetime import datetime
 import userManagement as dbHandler
 import bcrypt
@@ -17,6 +17,10 @@ def register_main_routes(app):
             return render_template("index.html")
 
 
+    def get_db():
+        conn = sqlite3.connect('.databaseFiles/database.db')
+        conn.row_factory = sqlite3.Row
+        return conn
 
     @app.route("/dashboard")
     def dashboard():
@@ -226,27 +230,16 @@ def register_main_routes(app):
         
         return redirect(url_for('profile'))
 
-
-        from flask import request
-
-    @app.route('/log_study_timer_event', methods=['POST'])
-    def log_study_timer_event():
-        data = request.json
-        event = data.get('event')
-        username = session.get('username', 'anonymous')
-        with open('security_log.log', 'a') as f:
-            f.write(f"[{datetime.now()}] User: {username}, Event: {event}\n")
-        return {'status': 'ok'}
-
     @app.route("/log_study_time", methods=["POST"])
     def log_study_time():
         if 'username' not in session:
             return jsonify({"error": "Not logged in"}), 401
 
         data = request.get_json()
-        seconds = data.get("seconds")
-
-        if not isinstance(seconds, int):
+        seconds = data.get("seconds", 0)
+        try:
+            seconds = int(seconds)
+        except Exception:
             return jsonify({"error": "Invalid data"}), 400
 
         conn = get_db()
@@ -256,6 +249,8 @@ def register_main_routes(app):
             (seconds, session['username'])
         )
         conn.commit()
+        updated = cur.rowcount
         conn.close()
 
-        return jsonify({"success": True, "added": seconds})
+        print(f"Added {seconds} seconds to {session['username']}, updated rows: {updated}")
+        return jsonify({"success": True, "added": seconds, "updated": updated})

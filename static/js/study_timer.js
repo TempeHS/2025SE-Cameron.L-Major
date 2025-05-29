@@ -4,11 +4,18 @@ let timerInterval;
 let elapsedSeconds = 0;
 let running = false;
 
+// --- CSRF TOKEN HELPER ---
+function getCSRFToken() {
+  const meta = document.querySelector('meta[name="csrf-token"]');
+  return meta ? meta.getAttribute('content') : '';
+}
+
 function sendStudyTimeToServer(seconds) {
   fetch("/log_study_time", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-CSRFToken": getCSRFToken()
     },
     body: JSON.stringify({ seconds: seconds }),
   })
@@ -34,7 +41,10 @@ function logStudyTimerEvent(event) {
   console.log("Logging event to backend:", event);
   fetch('/log_study_timer_event', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json',
+      "X-CSRFToken": getCSRFToken()
+    },
     body: JSON.stringify({event: event})
   })
   .then(res => res.json())

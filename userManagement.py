@@ -355,3 +355,4 @@ def delete_user_data(username):
         
     except sqlite3.Error as e:
         raise DatabaseError(f"Database error: {e}") from e
+
