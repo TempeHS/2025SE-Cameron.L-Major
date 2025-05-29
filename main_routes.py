@@ -36,16 +36,21 @@ def register_main_routes(app):
             hours = total_seconds // 3600
             minutes = (total_seconds % 3600) // 60
 
+            # XP Calculation: 1 XP per minute
+            xp = total_seconds // 60
+
             return render_template(
                 "dashboard.html",
                 username=session['username'],
                 email=session['email'],
                 study_hours=hours,
-                study_minutes=minutes
+                study_minutes=minutes,
+                xp=xp
             )
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))
+
 
         
     @app.route("/analytics")
@@ -242,15 +247,22 @@ def register_main_routes(app):
         except Exception:
             return jsonify({"error": "Invalid data"}), 400
 
+        xp_earned = seconds // 60  # 1 XP per minute
+
         conn = get_db()
         cur = conn.cursor()
         cur.execute(
-            "UPDATE users SET total_study_time = COALESCE(total_study_time, 0) + ? WHERE username = ?",
-            (seconds, session['username'])
+            """
+            UPDATE users
+            SET total_study_time = COALESCE(total_study_time, 0) + ?,
+                xp = COALESCE(xp, 0) + ?
+            WHERE username = ?
+            """,
+            (seconds, xp_earned, session['username'])
         )
         conn.commit()
         updated = cur.rowcount
         conn.close()
 
-        print(f"Added {seconds} seconds to {session['username']}, updated rows: {updated}")
-        return jsonify({"success": True, "added": seconds, "updated": updated})
+        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (rows updated: {updated})")
+        return jsonify({"success": True, "added_seconds": seconds, "added_xp": xp_earned})

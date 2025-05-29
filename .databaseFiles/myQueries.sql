@@ -31,3 +31,5 @@
 --ALTER TABLE users ADD COLUMN total_study_time INTEGER;
 
 --UPDATE users SET total_study_time = 0 WHERE total_study_time IS NULL;
+
+--ALTER TABLE users ADD COLUMN xp INTEGER DEFAULT 0;

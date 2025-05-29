@@ -2,20 +2,20 @@
 
 ## **Backlog Tasks**
 
-- [ ] Redesign `layout.html` to reflect a study-focused app aesthetic.
-- [ ] Add branding: update site title and favicon to match GameStudy identity.
-- [ ] Build `dashboard.html` page with:
+- [X] Redesign `layout.html` to reflect a study-focused app aesthetic.
+- [X] Add branding: update site title and favicon to match GameStudy identity.
+- [X] Build `dashboard.html` page with:
   - XP display area.
   - Study timer placeholder.
   - Navigation bar with appropriate routes.
-- [ ] Update navigation layout for better UX on desktop and mobile.
-- [ ] Implement backend logic for:
+- [X] Update navigation layout for better UX on desktop and mobile.
+- [X] Implement backend logic for:
   - Tracking study session time.
   - Awarding XP based on duration.
-- [ ] Set up front-end logic for dynamic study session flow (timer logic to come).
-- [ ] Ensure consistent theming and styling using Bootstrap utility classes.
-- [ ] Integrate session-based temporary storage for study time tracking.
-- [ ] Refactor old data-logging themed content to match gamified studying tone.
+- [X] Set up front-end logic for dynamic study session flow (timer logic to come).
+- [X] Ensure consistent theming and styling using Bootstrap utility classes.
+- [X] Integrate session-based temporary storage for study time tracking.
+- [X] Refactor old data-logging themed content to match gamified studying tone.
 
 ## **Increment**
 
