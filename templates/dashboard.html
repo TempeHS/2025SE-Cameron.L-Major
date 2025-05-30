@@ -5,6 +5,43 @@
   <h1 style="color:#10b981;">Welcome, {{ username }}!</h1>
   <p style="color:#bfc9d1;">This is your Dashboard.</p>
 
+  <!-- Streak Display (centered, dynamic emoji/text) -->
+  <div class="row mb-4">
+    <div class="col-12 text-center">
+      {% if streak >= 30 %}
+        <span style="font-size:2.5rem;">🔥🏆</span>
+        <span class="fs-4" style="color:#fff;">Incredible! {{ streak }}-day streak!</span>
+      {% elif streak >= 14 %}
+        <span style="font-size:2.5rem;">🔥</span>
+        <span class="fs-4" style="color:#fff;">Amazing! {{ streak }}-day streak!</span>
+      {% elif streak >= 7 %}
+        <span style="font-size:2.5rem;">🌟</span>
+        <span class="fs-4" style="color:#fff;">Great! {{ streak }}-day streak!</span>
+      {% elif streak >= 3 %}
+        <span style="font-size:2.5rem;">✨</span>
+        <span class="fs-4" style="color:#fff;">Nice! {{ streak }}-day streak!</span>
+      {% elif streak == 2 %}
+        <span style="font-size:2.5rem;">😊</span>
+        <span class="fs-4" style="color:#fff;">Keep going! 2-day streak!</span>
+      {% elif streak == 1 %}
+        <span style="font-size:2.5rem;">👍</span>
+        <span class="fs-4" style="color:#fff;">Started a streak! 1 day!</span>
+      {% else %}
+        <span style="font-size:2.5rem;">⏳</span>
+        <span class="fs-4" style="color:#fff;">No current streak. Start studying today!</span>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Study Timer Button -->
+  <div class="row mb-3">
+    <div class="col-12 text-center">
+      <a href="{{ url_for('study_timer') }}" class="btn btn-lg btn-success">
+        Open Study Timer
+      </a>
+    </div>
+  </div>
+
   <div class="row g-4 mt-4">
     <!-- User Info -->
     <div class="col-lg-4">
@@ -29,6 +66,10 @@
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/profile">Profile</a></li>
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/settings">Settings</a></li>
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="{{ url_for('home_logged_in') }}">Home</a></li>
+          <!-- Optional: Study Timer link in navigation -->
+          <li class="list-group-item bg-dark text-light border-secondary">
+            <a class="text-success" href="{{ url_for('study_timer') }}">Study Timer</a>
+          </li>
         </ul>
       </div>
     </div>

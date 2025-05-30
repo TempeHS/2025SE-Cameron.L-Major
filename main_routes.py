@@ -1,5 +1,5 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
-from datetime import datetime
+from datetime import datetime, timedelta 
 import userManagement as dbHandler
 import bcrypt
 from utils import validate_password, basic_sanitize_input
@@ -25,21 +25,23 @@ def register_main_routes(app):
     @app.route("/dashboard")
     def dashboard():
         if 'username' in session and 'email' in session:
-            conn = sqlite3.connect('.databaseFiles/database.db')
-            conn.row_factory = sqlite3.Row
+            conn = get_db()
             cur = conn.cursor()
-            cur.execute("SELECT total_study_time FROM users WHERE username = ?", (session['username'],))
+            cur.execute("SELECT total_study_time, xp FROM users WHERE username = ?", (session['username'],))
             user = cur.fetchone()
 
             total_seconds = user["total_study_time"] if user and user["total_study_time"] is not None else 0
             hours = total_seconds // 3600
             minutes = (total_seconds % 3600) // 60
+            xp = user["xp"] if user and user["xp"] is not None else 0
 
-            # XP Calculation: 1 XP per minute
-            xp = total_seconds // 60
-
+            # Fetch achievements
             cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
             achievements = cur.fetchall()
+
+            # Fetch streak
+            streak = get_study_streak(session['username'], cur)
+
             conn.close()
             return render_template(
                 "dashboard.html",
@@ -48,12 +50,12 @@ def register_main_routes(app):
                 study_hours=hours,
                 study_minutes=minutes,
                 xp=xp,
-                achivements=achievements
+                achievements=achievements,
+                streak=streak
             )
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))
-
 
         
     @app.route("/analytics")
@@ -270,37 +272,98 @@ def register_main_routes(app):
         row = cur.fetchone()
         new_xp = row['xp'] if row else 0
 
-        # Unlock achievements if needed
-        check_and_unlock_achievements(session['username'], new_xp)
+        # Log today's session
+        today = datetime.now().strftime('%Y-%m-%d')
+        cur.execute(
+            "INSERT INTO study_sessions (username, date, seconds) VALUES (?, ?, ?)",
+            (session['username'], today, seconds)
+        )
 
-        # Optionally, fetch unlocked achievements to return to frontend
+        # Unlock XP-based achievements
+        new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp)
+
+        # Unlock streak achievements and get current streak
+        new_streak_achievements, streak = check_streak_achievements(session['username'], cur)
+
+        # Optionally, fetch all achievements for display
         cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
         achievements = [{"name": r["achievement_name"], "unlocked_at": r["unlocked_at"]} for r in cur.fetchall()]
 
+        conn.commit()
         conn.close()
 
-        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp})")
+        # Combine all newly unlocked achievements for notification
+        new_achievements = new_xp_achievements + new_streak_achievements
+
+        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp}, streak: {streak})")
         return jsonify({
             "success": True,
             "added_seconds": seconds,
             "added_xp": xp_earned,
             "new_xp": new_xp,
-            "achievements": achievements
+            "streak": streak,
+            "new_achievements": new_achievements,
+            "achievements": achievements  # for dashboard display
         })
-
     def check_and_unlock_achievements(username, xp):
         milestones = [
             (10, "First Steps"),
+            (50, "Warming Up"),
             (100, "Getting Serious"),
+            (250, "Quarter Master"),
             (500, "Study Pro"),
+            (750, "XP Grinder"),
             (1000, "Master"),
+            (2000, "Legend"),
+            (5000, "Study Machine"),
+            (10000, "Ultimate Scholar"),
         ]
         conn = get_db()
         cur = conn.cursor()
+        unlocked = []
         for threshold, name in milestones:
             cur.execute("SELECT 1 FROM achievements WHERE username=? AND achievement_name=?", (username, name))
             if xp >= threshold and not cur.fetchone():
                 cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
-                print(f"Achievement unlocked for {username}: {name}")
+                unlocked.append(name)
         conn.commit()
         conn.close()
+        return unlocked 
+
+    def get_study_streak(username,cur):
+        streak = 0
+        today = datetime.now().date()
+        for i in range(0, 100):  # check up to 100 days back
+            day = today - timedelta(days=i)
+            cur.execute(
+                "SELECT 1 FROM study_sessions WHERE username=? AND date=?",
+                (username, day.strftime('%Y-%m-%d'))
+            )
+            if cur.fetchone():
+                streak += 1
+            else:
+                break
+        return streak
+
+    def check_streak_achievements(username, cur):
+        streak = get_study_streak(username, cur)
+        unlocked = []
+        milestones = [
+            (3, "3-Day Streaker"),
+            (7, "One Week Wonder"),
+            (14, "Two Week Warrior"),
+            (30, "Month Master"),
+        ]
+        for threshold, name in milestones:
+            cur.execute("SELECT 1 FROM achievements WHERE username=? AND achievement_name=?", (username, name))
+            if streak >= threshold and not cur.fetchone():
+                cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
+                unlocked.append(name)
+        return unlocked, streak
+
+    @app.route("/study_timer")
+    def study_timer():
+        if 'username' not in session:
+            flash("You need to log in first.")
+            return redirect(url_for('login'))
+        return render_template("study_timer.html")

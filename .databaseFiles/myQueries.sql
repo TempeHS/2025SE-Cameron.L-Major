@@ -40,3 +40,10 @@
     achievement_name TEXT NOT NULL,
     unlocked_at DATETIME DEFAULT CURRENT_TIMESTAMP
 --);
+
+--CREATE TABLE IF NOT EXISTS study_sessions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    date TEXT NOT NULL,  -- e.g., '2025-05-30'
+    seconds INTEGER NOT NULL
+--);

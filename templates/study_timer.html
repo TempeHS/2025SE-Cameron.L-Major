@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+{% block title %}Study Timer{% endblock %}
+{% block content %}
+<div id="study-timer" class="d-flex flex-column align-items-center justify-content-center" style="min-height:100vh; width:100vw; background-size:cover; background-position:center;">
+  <div class="mb-3 text-center">
+    <label for="bg-select" class="form-label text-light">Choose Background:</label>
+    <select id="bg-select" class="form-select w-auto d-inline-block">
+      <option value="nature.png">Nature</option>
+      <option value="ocean.png">Oceans</option>
+      <option value="space.png">Space</option>
+    </select>
+  </div>
+  <div id="timer-display" class="display-1 text-light mb-4">00:00:00</div>
+  <div>
+    <button id="start-btn" class="btn btn-success">Start</button>
+    <button id="pause-btn" class="btn btn-warning" disabled>Pause</button>
+    <button id="reset-btn" class="btn btn-danger" disabled>Reset</button>
+    <button id="save-btn" class="btn btn-primary" disabled>Save</button>
+    <button id="fullscreen-btn" class="btn btn-secondary">Fullscreen</button>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/study_timer.js') }}"></script>
+{% endblock %}

@@ -20,8 +20,23 @@ function sendStudyTimeToServer(seconds) {
     body: JSON.stringify({ seconds: seconds }),
   })
     .then(response => response.json())
-    .then(data => console.log("Study time logged:", data))
+    .then(data => {
+      console.log("Study time logged:", data);
+      if (data.new_achievements && data.new_achievements.length > 0) {
+        data.new_achievements.forEach(name => showAchievementNotification(name));
+      }
+    })
     .catch(error => console.error("Error:", error));
+}
+
+// Simple notification 
+function showAchievementNotification(name) {
+  const notif = document.createElement('div');
+  notif.className = 'alert alert-success position-fixed top-0 end-0 m-4';
+  notif.style.zIndex = 9999;
+  notif.innerHTML = `<strong>Achievement Unlocked!</strong> ${name}`;
+  document.body.appendChild(notif);
+  setTimeout(() => notif.remove(), 4000);
 }
 
 function updateDisplay() {
@@ -75,12 +90,14 @@ document.addEventListener('DOMContentLoaded', function() {
   const startBtn = document.getElementById('start-btn');
   const pauseBtn = document.getElementById('pause-btn');
   const resetBtn = document.getElementById('reset-btn');
-  const saveBtn = document.getElementById('save-btn');  // new save button
+  const saveBtn = document.getElementById('save-btn');
   const fullscreenBtn = document.getElementById('fullscreen-btn');
   const timerDiv = document.getElementById('study-timer');
+  const bgSelect = document.getElementById('bg-select');
 
-  console.log("Timer elements:", {startBtn, pauseBtn, resetBtn, saveBtn, fullscreenBtn, timerDiv});
+  console.log("Timer elements:", {startBtn, pauseBtn, resetBtn, saveBtn, fullscreenBtn, timerDiv, bgSelect});
 
+  // --- Timer Logic ---
   if (startBtn && pauseBtn && resetBtn && saveBtn) {
     // Load previous state
     loadState();
@@ -143,7 +160,6 @@ document.addEventListener('DOMContentLoaded', function() {
     saveBtn.onclick = function() {
       if (elapsedSeconds > 0) {
         sendStudyTimeToServer(elapsedSeconds);
-        // Optionally reset timer after save
         running = false;
         clearInterval(timerInterval);
         elapsedSeconds = 0;
@@ -158,26 +174,41 @@ document.addEventListener('DOMContentLoaded', function() {
     console.error("One or more timer buttons not found in DOM.");
   }
 
-  // Fullscreen logic unchanged...
+  // --- Fullscreen and Background Logic ---
+  function setFullscreenBg() {
+    if (document.fullscreenElement === timerDiv) {
+      timerDiv.style.backgroundImage = `url('/static/images/${bgSelect.value}')`;
+      timerDiv.style.backgroundSize = 'cover';
+      timerDiv.style.backgroundPosition = 'center';
+    }
+  }
+  function clearFullscreenBg() {
+    timerDiv.style.backgroundImage = '';
+  }
+
   if (fullscreenBtn && timerDiv) {
     fullscreenBtn.onclick = function() {
       if (!document.fullscreenElement) {
         timerDiv.requestFullscreen();
-        logStudyTimerEvent('fullscreen_enter');
       } else {
         document.exitFullscreen();
-        logStudyTimerEvent('fullscreen_exit');
       }
     };
 
     document.addEventListener('fullscreenchange', function() {
-      if (document.fullscreenElement) {
+      if (document.fullscreenElement === timerDiv) {
         fullscreenBtn.textContent = "Exit Fullscreen";
+        setFullscreenBg();
       } else {
         fullscreenBtn.textContent = "Fullscreen";
+        clearFullscreenBg();
       }
     });
-  } else {
-    console.warn("Fullscreen button or timerDiv not found.");
+  }
+
+  if (bgSelect && timerDiv) {
+    bgSelect.addEventListener('change', function() {
+      setFullscreenBg();
+    });
   }
 });
