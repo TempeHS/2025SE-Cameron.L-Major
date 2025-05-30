@@ -30,7 +30,6 @@ def register_main_routes(app):
             cur = conn.cursor()
             cur.execute("SELECT total_study_time FROM users WHERE username = ?", (session['username'],))
             user = cur.fetchone()
-            conn.close()
 
             total_seconds = user["total_study_time"] if user and user["total_study_time"] is not None else 0
             hours = total_seconds // 3600
@@ -39,13 +38,17 @@ def register_main_routes(app):
             # XP Calculation: 1 XP per minute
             xp = total_seconds // 60
 
+            cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
+            achievements = cur.fetchall()
+            conn.close()
             return render_template(
                 "dashboard.html",
                 username=session['username'],
                 email=session['email'],
                 study_hours=hours,
                 study_minutes=minutes,
-                xp=xp
+                xp=xp,
+                achivements=achievements
             )
         else:
             flash("You need to log in first.")
@@ -261,8 +264,43 @@ def register_main_routes(app):
             (seconds, xp_earned, session['username'])
         )
         conn.commit()
-        updated = cur.rowcount
+
+        # Fetch new XP value
+        cur.execute("SELECT xp FROM users WHERE username = ?", (session['username'],))
+        row = cur.fetchone()
+        new_xp = row['xp'] if row else 0
+
+        # Unlock achievements if needed
+        check_and_unlock_achievements(session['username'], new_xp)
+
+        # Optionally, fetch unlocked achievements to return to frontend
+        cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
+        achievements = [{"name": r["achievement_name"], "unlocked_at": r["unlocked_at"]} for r in cur.fetchall()]
+
         conn.close()
 
-        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (rows updated: {updated})")
-        return jsonify({"success": True, "added_seconds": seconds, "added_xp": xp_earned})
+        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp})")
+        return jsonify({
+            "success": True,
+            "added_seconds": seconds,
+            "added_xp": xp_earned,
+            "new_xp": new_xp,
+            "achievements": achievements
+        })
+
+    def check_and_unlock_achievements(username, xp):
+        milestones = [
+            (10, "First Steps"),
+            (100, "Getting Serious"),
+            (500, "Study Pro"),
+            (1000, "Master"),
+        ]
+        conn = get_db()
+        cur = conn.cursor()
+        for threshold, name in milestones:
+            cur.execute("SELECT 1 FROM achievements WHERE username=? AND achievement_name=?", (username, name))
+            if xp >= threshold and not cur.fetchone():
+                cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
+                print(f"Achievement unlocked for {username}: {name}")
+        conn.commit()
+        conn.close()

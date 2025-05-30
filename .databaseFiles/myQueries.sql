@@ -33,3 +33,10 @@
 --UPDATE users SET total_study_time = 0 WHERE total_study_time IS NULL;
 
 --ALTER TABLE users ADD COLUMN xp INTEGER DEFAULT 0;
+
+--CREATE TABLE IF NOT EXISTS achievements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    achievement_name TEXT NOT NULL,
+    unlocked_at DATETIME DEFAULT CURRENT_TIMESTAMP
+--);
