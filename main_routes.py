@@ -5,6 +5,7 @@ import bcrypt
 from utils import validate_password, basic_sanitize_input
 from flask_wtf.csrf import validate_csrf
 import sqlite3
+import os
 
 def register_main_routes(app):
     @app.route("/", methods=["GET"])
@@ -18,9 +19,12 @@ def register_main_routes(app):
 
 
     def get_db():
-        conn = sqlite3.connect('.databaseFiles/database.db')
+        db_path = '.databaseFiles/database.db'
+        print("USING DATABASE FILE:", os.path.abspath(db_path))
+        conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         return conn
+
 
     @app.route("/dashboard")
     def dashboard():
@@ -240,6 +244,7 @@ def register_main_routes(app):
         
         return redirect(url_for('profile'))
 
+
     @app.route("/log_study_time", methods=["POST"])
     def log_study_time():
         if 'username' not in session:
@@ -279,8 +284,8 @@ def register_main_routes(app):
             (session['username'], today, seconds)
         )
 
-        # Unlock XP-based achievements
-        new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp)
+        # Unlock XP-based achievements (pass cur!)
+        new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp, cur)
 
         # Unlock streak achievements and get current streak
         new_streak_achievements, streak = check_streak_achievements(session['username'], cur)
@@ -305,9 +310,11 @@ def register_main_routes(app):
             "new_achievements": new_achievements,
             "achievements": achievements  # for dashboard display
         })
-    def check_and_unlock_achievements(username, xp):
+
+    def check_and_unlock_achievements(username, xp, cur):
+        print(f"DEBUG: Checking achievements for {username} with XP {xp}")
         milestones = [
-            (10, "First Steps"),
+            (1, "First Steps"),
             (50, "Warming Up"),
             (100, "Getting Serious"),
             (250, "Quarter Master"),
@@ -318,17 +325,15 @@ def register_main_routes(app):
             (5000, "Study Machine"),
             (10000, "Ultimate Scholar"),
         ]
-        conn = get_db()
-        cur = conn.cursor()
         unlocked = []
         for threshold, name in milestones:
             cur.execute("SELECT 1 FROM achievements WHERE username=? AND achievement_name=?", (username, name))
             if xp >= threshold and not cur.fetchone():
+                print(f"DEBUG: Unlocking {name} for {username} at {xp} XP")
                 cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
                 unlocked.append(name)
-        conn.commit()
-        conn.close()
-        return unlocked 
+        return unlocked
+
 
     def get_study_streak(username,cur):
         streak = 0
@@ -367,3 +372,15 @@ def register_main_routes(app):
             flash("You need to log in first.")
             return redirect(url_for('login'))
         return render_template("study_timer.html")
+
+    @app.route("/achievements")
+    def achievements():
+        if 'username' not in session:
+            flash("You need to log in first.")
+            return redirect(url_for('login'))
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
+        achievements = cur.fetchall()
+        conn.close()
+        return render_template("achievements.html", achievements=achievements)

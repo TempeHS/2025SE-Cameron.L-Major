@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+{% block title %}Achievements{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h1 style="color:#10b981;">Your Achievements</h1>
+  <ul class="list-group bg-dark rounded mt-4">
+    {% if achievements %}
+      {% for ach in achievements %}
+        <li class="list-group-item bg-dark text-success border-secondary d-flex justify-content-between align-items-center">
+          <span><strong>{{ ach['achievement_name'] }}</strong></span>
+          <span style="color:#a5b4fc; font-size:0.9em;">({{ ach['unlocked_at'] }})</span>
+        </li>
+      {% endfor %}
+    {% else %}
+      <li class="list-group-item bg-dark text-light border-secondary">
+        No achievements yet. Keep studying!
+      </li>
+    {% endif %}
+  </ul>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success mt-4">Back to Dashboard</a>
+</div>
+{% endblock %}
