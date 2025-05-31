@@ -3,6 +3,7 @@ console.log("study_timer.js loaded!");
 let timerInterval;
 let elapsedSeconds = 0;
 let running = false;
+window.elapsedSeconds = elapsedSeconds; // Ensure global for progress bar
 
 // --- CSRF TOKEN HELPER ---
 function getCSRFToken() {
@@ -50,6 +51,8 @@ function updateDisplay() {
   } else {
     console.error("Timer display element not found!");
   }
+  // Sync global for progress bar
+  window.elapsedSeconds = elapsedSeconds;
   // Update the progress bar every time the display updates
   if (typeof window.updateProgressBar === "function") {
     window.updateProgressBar();
@@ -84,6 +87,7 @@ function loadState() {
 
   if (savedElapsed !== null) {
     elapsedSeconds = parseInt(savedElapsed, 10) || 0;
+    window.elapsedSeconds = elapsedSeconds;
   }
 
   running = savedRunning === '1';
@@ -118,6 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (running) {
       timerInterval = setInterval(() => {
         elapsedSeconds++;
+        window.elapsedSeconds = elapsedSeconds;
         updateDisplay();
         saveState();
         updateButtons();
@@ -131,6 +136,7 @@ document.addEventListener('DOMContentLoaded', function() {
         running = true;
         timerInterval = setInterval(() => {
           elapsedSeconds++;
+          window.elapsedSeconds = elapsedSeconds;
           updateDisplay();
           saveState();
           updateButtons();
@@ -155,6 +161,7 @@ document.addEventListener('DOMContentLoaded', function() {
       running = false;
       clearInterval(timerInterval);
       elapsedSeconds = 0;
+      window.elapsedSeconds = elapsedSeconds;
       updateDisplay();
       updateButtons();
       saveState();
@@ -167,6 +174,7 @@ document.addEventListener('DOMContentLoaded', function() {
         running = false;
         clearInterval(timerInterval);
         elapsedSeconds = 0;
+        window.elapsedSeconds = elapsedSeconds;
         updateDisplay();
         updateButtons();
         saveState();
