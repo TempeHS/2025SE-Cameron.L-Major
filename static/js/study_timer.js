@@ -50,6 +50,10 @@ function updateDisplay() {
   } else {
     console.error("Timer display element not found!");
   }
+  // Update the progress bar every time the display updates
+  if (typeof window.updateProgressBar === "function") {
+    window.updateProgressBar();
+  }
 }
 
 function logStudyTimerEvent(event) {

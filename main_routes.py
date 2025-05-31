@@ -378,9 +378,43 @@ def register_main_routes(app):
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
+
+        # Define all possible achievements (add icons as you like)
+        all_achievements = [
+            {"name": "First Steps", "icon": "🎉", "threshold": 1},
+            {"name": "Warming Up", "icon": "🔥", "threshold": 50},
+            {"name": "Getting Serious", "icon": "💪", "threshold": 100},
+            {"name": "Quarter Master", "icon": "🏅", "threshold": 250},
+            {"name": "Study Pro", "icon": "📚", "threshold": 500},
+            {"name": "XP Grinder", "icon": "⚡", "threshold": 750},
+            {"name": "Master", "icon": "🥇", "threshold": 1000},
+            {"name": "Legend", "icon": "🌟", "threshold": 2000},
+            {"name": "Study Machine", "icon": "🤖", "threshold": 5000},
+            {"name": "Ultimate Scholar", "icon": "🏆", "threshold": 10000},
+        ]
+
+        # Fetch unlocked achievements
         conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
-        achievements = cur.fetchall()
+        unlocked = cur.fetchall()
+        cur.execute("SELECT xp FROM users WHERE username=?", (session['username'],))
+        user = cur.fetchone()
+        user_xp = user['xp'] if user else 0
         conn.close()
-        return render_template("achievements.html", achievements=achievements)
+
+        # Build dict for unlocked achievements
+        user_achievements = {row['achievement_name']: {"unlocked_at": row['unlocked_at']} for row in unlocked}
+
+        # Add progress to each milestone
+        for milestone in all_achievements:
+            if milestone['name'] in user_achievements:
+                milestone['progress'] = 100
+            else:
+                milestone['progress'] = min(100, int((user_xp / milestone['threshold']) * 100))
+
+        return render_template(
+            "achievements.html",
+            all_achievements=all_achievements,
+            user_achievements=user_achievements
+        )

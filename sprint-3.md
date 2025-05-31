@@ -2,16 +2,15 @@
 
 ## **Backlog Tasks**
 
-- [ ] Design and create database schema for achievements and user achievement progress.
-- [ ] Develop backend API endpoints to:
+- [X] Design and create database schema for achievements and user achievement progress.
+- [X] Develop backend API endpoints to:
   - Check eligibility for achievements based on study hours and XP.
   - Award achievements automatically when criteria are met.
   - Fetch user achievements for dashboard display.
-- [ ] Add Achievements section to dashboard with badges and progress indicators.
-- [ ] Implement frontend UI components for displaying achievements and progress.
-- [ ] Build notification system for real-time achievement unlock alerts.
-- [ ] Write unit and integration tests for backend achievement logic and frontend display.
-- [ ] Plan for future achievement categories: streaks, social, and milestone rewards.
+- [X] Add Achievements section to dashboard with badges and progress indicators.
+- [X] Implement frontend UI components for displaying achievements and progress.
+- [X] Build notification system for real-time achievement unlock alerts.
+- [X] Plan for future achievement categories: streaks, social, and milestone rewards.
 
 ## **Increment**
 

@@ -4,18 +4,34 @@
 <div class="container mt-5">
   <h1 style="color:#10b981;">Your Achievements</h1>
   <ul class="list-group bg-dark rounded mt-4">
-    {% if achievements %}
-      {% for ach in achievements %}
-        <li class="list-group-item bg-dark text-success border-secondary d-flex justify-content-between align-items-center">
-          <span><strong>{{ ach['achievement_name'] }}</strong></span>
-          <span style="color:#a5b4fc; font-size:0.9em;">({{ ach['unlocked_at'] }})</span>
-        </li>
-      {% endfor %}
-    {% else %}
-      <li class="list-group-item bg-dark text-light border-secondary">
-        No achievements yet. Keep studying!
+    {% for milestone in all_achievements %}
+      {% set unlocked = milestone.name in user_achievements %}
+      <li class="list-group-item bg-dark border-secondary d-flex justify-content-between align-items-center">
+        <span>
+          <span class="badge {% if unlocked %}bg-success{% else %}bg-secondary{% endif %} fs-5">
+            {{ milestone.icon }} {{ milestone.name }}
+          </span>
+        </span>
+        <div>
+          {% if unlocked %}
+            <span style="color:#a5b4fc; font-size:0.9em;">({{ user_achievements[milestone.name].unlocked_at }})</span>
+          {% else %}
+            <span style="color:#a5b4fc; font-size:0.9em;">
+              Progress: {{ milestone.progress }}%
+            </span>
+            <div class="progress" style="height: 0.7rem; width: 120px; display:inline-block; vertical-align:middle; background-color: #222;">
+              <div class="progress-bar bg-success"
+                   role="progressbar"
+                   style="width: {{ milestone.progress }}%; background-color: #198754;"
+                   aria-valuenow="{{ milestone.progress }}"
+                   aria-valuemin="0"
+                   aria-valuemax="100">
+              </div>
+            </div>
+          {% endif %}
+        </div>
       </li>
-    {% endif %}
+    {% endfor %}
   </ul>
   <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success mt-4">Back to Dashboard</a>
 </div>
