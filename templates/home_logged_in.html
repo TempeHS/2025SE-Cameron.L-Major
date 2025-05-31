@@ -8,49 +8,41 @@
   <div class="alert alert-info mt-4" role="alert">
     You're logged in! Use the navigation above to explore your study tools.
   </div>
+
+  <!-- Leaderboard Table -->
   <div class="row mt-5">
-    <!-- Leaderboard Placeholder -->
     <div class="col-md-6 mb-4">
       <div class="card bg-dark text-light shadow rounded h-100">
         <div class="card-body">
-          <h3 class="card-title text-center" style="color:#a5b4fc;">🏆 Leaderboard (Study Time)</h3>
-          <table class="table table-dark table-striped rounded mt-3">
+          <h3 class="card-title" style="color:#10b981;">
+            <a href="{{ url_for('leaderboard') }}" style="color:#10b981; text-decoration: underline;">
+              🏆 Leaderboard
+            </a>
+          </h3>
+          <table class="table table-dark table-striped table-bordered rounded mt-3">
             <thead>
               <tr>
-                <th>Rank</th>
-                <th>User</th>
-                <th>Study Time (hrs)</th>
+                <th scope="col">Rank</th>
+                <th scope="col">Username</th>
+                <th scope="col">Study Hours</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>1</td>
-                <td><span style="color:#10b981;">study_champ</span></td>
-                <td>42</td>
-              </tr>
-              <tr>
-                <td>2</td>
-                <td>quizmaster</td>
-                <td>36</td>
-              </tr>
-              <tr>
-                <td>3</td>
-                <td>flashcardfan</td>
-                <td>29</td>
-              </tr>
-              <tr>
-                <td>4</td>
-                <td>you</td>
-                <td>12</td>
-              </tr>
-              <tr>
-                <td>5</td>
-                <td>newbie</td>
-                <td>7</td>
-              </tr>
+              {% for user in leaderboard %}
+                <tr {% if user.username == session['username'] %}class="table-success"{% endif %}>
+                  <td>{{ loop.index }}</td>
+                  <td>
+                    {% if user.username == session['username'] %}
+                      <span style="color:#10b981;">{{ user.username }}</span>
+                    {% else %}
+                      {{ user.username }}
+                    {% endif %}
+                  </td>
+                  <td>{{ user.study_hours }}</td>
+                </tr>
+              {% endfor %}
             </tbody>
           </table>
-          <p class="card-text text-muted text-center mt-2">Leaderboard feature coming soon!</p>
         </div>
       </div>
     </div>
@@ -59,7 +51,11 @@
     <div class="col-md-6 mb-4">
       <div class="card bg-dark text-light shadow rounded h-100">
         <div class="card-body d-flex flex-column justify-content-center align-items-center">
-          <h3 class="card-title" style="color:#10b981;">⏱️ Study Tracker</h3>
+          <h3 class="card-title" style="color:#10b981;">
+            <a href="{{ url_for('study_timer') }}" style="color:#10b981; text-decoration: underline;">
+              ⏱️ Study Tracker
+            </a>
+          </h3>
           <div id="study-timer" class="w-100 text-center mt-4 mb-3">
             <span id="timer-display" style="font-size:2.5rem; font-weight:700; color:#a5b4fc;">00:00:00</span>
             <div class="mt-3">
@@ -67,7 +63,6 @@
               <button id="pause-btn" class="btn btn-secondary btn-sm mx-1" disabled>Pause</button>
               <button id="reset-btn" class="btn btn-danger btn-sm mx-1" disabled>Reset</button>
               <button id="save-btn" disabled>Save</button>
-              <a href="{{ url_for('study_timer') }}" class="btn btn-primary btn-sm mx-1" id="fullscreen-btn">Fullscreen</a>
             </div>
           </div>
         </div>

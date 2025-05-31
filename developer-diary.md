@@ -119,6 +119,29 @@ Today I completed quality assurance requirements for GameStudy, including metric
 **Title:** Sprint 1 Start and Finish
 **Date:** 25/05/25
 
+Today was the beginning and completion of Sprint 1. The focus was on setting up the project structure, initializing the repository, and implementing the basic user authentication system. I created the user registration and login pages, set up session management, and ensured password security using bcrypt. The database schema for users was finalized and tested. By the end of the sprint, users could sign up, log in, and log out successfully. This established the foundation for all future development.
+
 
 ---
 
+## Developer Diary Entry #14
+**Title:** Sprint 2 Start and Finish
+**Date:** 29/05/25
+
+Sprint 2 focused on building the core study timer functionality. I designed and implemented the timer UI, allowing users to start, pause, reset, and save their study sessions. The backend was updated to log study time for each user, and the timer state was made persistent using localStorage. I also added basic error handling and notifications for session events. Testing confirmed that study sessions were being tracked and saved correctly. This sprint delivered the main feature of the app and prepared the groundwork for gamification.
+
+---
+
+## Developer Diary Entry #15
+**Title:** Sprint 3 Start and Finish
+**Date:** 31/05/25
+
+Sprint 3 was dedicated to the achievements system. I designed the achievements database schema and implemented backend logic to check eligibility and award achievements automatically based on study time and XP. The frontend was updated to display achievements with badges and progress bars, and a notification system was added for real-time achievement unlocks. I also improved the dashboard UI to showcase user progress. Testing ensured that achievements were awarded and displayed correctly. This sprint added a major motivational feature to the app.
+
+---
+
+## Developer Diary Entry #16
+**Title:** Sprint 4 Start and Finish  
+**Date:** 
+
+---

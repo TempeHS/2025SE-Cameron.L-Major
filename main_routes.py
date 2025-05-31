@@ -20,7 +20,6 @@ def register_main_routes(app):
 
     def get_db():
         db_path = '.databaseFiles/database.db'
-        print("USING DATABASE FILE:", os.path.abspath(db_path))
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -102,16 +101,30 @@ def register_main_routes(app):
             flash("Log created successfully!")
             return redirect(url_for("dashboard"))
 
+
     @app.route("/home_logged_in", methods=["GET"])
     def home_logged_in():
-        """Render the home page for logged-in users with pagination."""
+        """Render the home page for logged-in users with leaderboard."""
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
 
-        return render_template("home_logged_in.html", 
-                            username=session['username'], 
-                            email=session['email'], )
+        conn = get_db()
+        cur = conn.cursor()
+        # Get top 10 users by total study time (in seconds)
+        cur.execute("SELECT username, COALESCE(total_study_time, 0) as total_study_time FROM users ORDER BY total_study_time DESC LIMIT 10")
+        leaderboard = [
+            {"username": row["username"], "study_hours": round(row["total_study_time"] / 3600, 1)}
+            for row in cur.fetchall()
+        ]
+        conn.close()
+
+        return render_template(
+            "home_logged_in.html",
+            username=session['username'],
+            email=session.get('email'),
+            leaderboard=leaderboard
+        )
 
     @app.route("/search_logs", methods=["GET"])
     def search_logs():
@@ -417,4 +430,77 @@ def register_main_routes(app):
             "achievements.html",
             all_achievements=all_achievements,
             user_achievements=user_achievements
+        )
+
+    @app.route("/leaderboard")
+    def leaderboard():
+        """Show the top 20 users by total study time and streak, with period filter."""
+        if 'username' not in session:
+            flash("You need to log in first.")
+            return redirect(url_for('login'))
+
+        period = request.args.get('period', 'all')
+        conn = get_db()
+        cur = conn.cursor()
+
+        if period == 'today':
+            date_filter = datetime.now().strftime('%Y-%m-%d')
+            cur.execute("""
+                SELECT username, SUM(seconds) as study_seconds
+                FROM study_sessions
+                WHERE date = ?
+                GROUP BY username
+                ORDER BY study_seconds DESC
+                LIMIT 20
+            """, (date_filter,))
+        elif period == 'week':
+            start_of_week = (datetime.now() - timedelta(days=datetime.now().weekday())).strftime('%Y-%m-%d')
+            cur.execute("""
+                SELECT username, SUM(seconds) as study_seconds
+                FROM study_sessions
+                WHERE date >= ?
+                GROUP BY username
+                ORDER BY study_seconds DESC
+                LIMIT 20
+            """, (start_of_week,))
+        else:  # all time
+            cur.execute("""
+                SELECT username, COALESCE(total_study_time, 0) as study_seconds
+                FROM users
+                ORDER BY study_seconds DESC
+                LIMIT 20
+            """)
+
+        users = cur.fetchall()
+
+        def get_streak(username):
+            streak = 0
+            today = datetime.now().date()
+            for i in range(0, 100):
+                day = today - timedelta(days=i)
+                cur.execute(
+                    "SELECT 1 FROM study_sessions WHERE username=? AND date=?",
+                    (username, day.strftime('%Y-%m-%d'))
+                )
+                if cur.fetchone():
+                    streak += 1
+                else:
+                    break
+            return streak
+
+        leaderboard = [
+            {
+                "username": row["username"],
+                "study_hours": round((row["study_seconds"] or 0) / 3600, 1),
+                "streak": get_streak(row["username"])
+            }
+            for row in users
+        ]
+        conn.close()
+
+        return render_template(
+            "leaderboard.html",
+            leaderboard=leaderboard,
+            period=period,
+            session=session
         )

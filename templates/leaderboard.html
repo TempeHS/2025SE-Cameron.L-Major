@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block title %}Leaderboard{% endblock %}
+{% block content %}
+<div class="container mt-5">
+  <h1 class="mb-4" style="color:#10b981;">Leaderboard</h1>
+
+  <!-- Filter Buttons -->
+  <div class="mb-3 text-center">
+    <a href="{{ url_for('leaderboard', period='all') }}" class="btn btn-outline-primary {% if period == 'all' %}active{% endif %}">All Time</a>
+    <a href="{{ url_for('leaderboard', period='week') }}" class="btn btn-outline-primary {% if period == 'week' %}active{% endif %}">This Week</a>
+    <a href="{{ url_for('leaderboard', period='today') }}" class="btn btn-outline-primary {% if period == 'today' %}active{% endif %}">Today</a>
+  </div>
+
+  <!-- Podium for Top 3 -->
+  <div class="row justify-content-center align-items-end mb-4" style="min-height: 160px;">
+    {% set medals = ['🥇','🥈','🥉'] %}
+    {% set avatars = ['🦸','🧙','🧑‍🚀','🧑‍💻','🦹','🧑‍🎤','🧑‍🏫','🧑‍🔬','🧑‍🎨','🧑‍🌾'] %}
+    {% for i in [1,0,2] %}
+      {% if leaderboard|length > i %}
+      <div class="col-4 text-center">
+        <div style="
+          background: {% if i == 0 %}#ffd700{% elif i == 1 %}#c0c0c0{% else %}#cd7f32{% endif %};
+          color: #222;
+          border-radius: 1rem 1rem 0 0;
+          padding: 1.2rem 0 0.5rem 0;
+          margin-bottom: -10px;
+          font-size: 2.2rem;
+          font-weight: bold;
+          box-shadow: 0 4px 16px #0002;
+          ">
+          {{ medals[i] }}<br>
+          <span style="font-size:2.5rem;">{{ avatars[i] }}</span><br>
+          <span style="font-size:1.2rem;">
+            {{ leaderboard[i].username }}
+            {% if leaderboard[i].username == session['username'] %}
+              <span class="badge bg-success ms-1">You</span>
+            {% endif %}
+          </span>
+          <div style="font-size:1rem; color:#333;">
+            {{ leaderboard[i].study_hours }} hrs<br>
+            🔥 {{ leaderboard[i].streak or 0 }}d streak
+          </div>
+        </div>
+        <div style="
+          height: {% if i == 0 %}70px{% elif i == 1 %}50px{% else %}35px{% endif %};
+          background: #222;
+          border-radius: 0 0 1rem 1rem;
+          margin: 0 20px;
+        "></div>
+      </div>
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <!-- Leaderboard Table -->
+  <table class="table table-dark table-striped table-bordered rounded">
+    <thead>
+      <tr>
+        <th scope="col">Rank</th>
+        <th scope="col">Avatar</th>
+        <th scope="col">Username</th>
+        <th scope="col">Study Hours</th>
+        <th scope="col">Streak (days)</th>
+        <th scope="col">Badge</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in leaderboard %}
+      <tr {% if user.username == session['username'] %}class="table-success"{% endif %}>
+        <td>
+          {% if loop.index0 == 0 %}🥇{% elif loop.index0 == 1 %}🥈{% elif loop.index0 == 2 %}🥉{% else %}{{ loop.index }}{% endif %}
+        </td>
+        <td style="font-size:1.5rem;">{{ avatars[loop.index0 % avatars|length] }}</td>
+        <td>
+          {{ user.username }}
+          {% if user.username == session['username'] %}
+            <span class="badge bg-success ms-1">You</span>
+          {% endif %}
+        </td>
+        <td>{{ user.study_hours }}</td>
+        <td>{{ user.streak or 0 }}</td>
+        <td>
+          {% if loop.index0 == 0 %}
+            <span class="badge bg-warning text-dark">Top 1 🥇</span>
+          {% elif loop.index0 == 1 %}
+            <span class="badge bg-secondary">Top 2 🥈</span>
+          {% elif loop.index0 == 2 %}
+            <span class="badge bg-warning text-dark">Top 3 🥉</span>
+          {% elif loop.index0 < 5 %}
+            <span class="badge bg-info text-dark">Top 5 🏅</span>
+          {% elif loop.index0 < 10 %}
+            <span class="badge bg-success">Top 10 🎖️</span>
+          {% elif loop.index0 < 20 %}
+            <span class="badge bg-primary">Top 20 🏆</span>
+          {% else %}
+            <span class="badge bg-dark">Participant</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <a href="{{ url_for('dashboard') }}" class="btn btn-outline-success mt-4">Back to Dashboard</a>
+</div>
+{% endblock %}
