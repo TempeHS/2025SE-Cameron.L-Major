@@ -8,7 +8,7 @@
 - [X] Expand XP system:
   - Adjust XP gain logic for different study durations.
   - Add level-up thresholds and dynamic level calculation.
-- [ ] Visual gamification:
+- [X] Visual gamification:
   - Show XP progress bar or meter.
   - Animate XP gain after each session.
 - [X] Persist XP and level info across sessions using database updates.

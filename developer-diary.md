@@ -147,3 +147,12 @@ Sprint 3 was dedicated to the achievements system. I designed the achievements d
 Sprint 4 was dedicated to enhance the gamification aspect, I added visual rank badges for the top 1, 2, 3, 5, 10, and 20 users, as well as fun achievement badges for all participants. The leaderboard UI was improved with a podium for the top three users, filter buttons for different time periods (all time, this week, today), and a personal highlight for the logged-in user. I also refined the progress bar logic on both the study timer and achievements pages to ensure accurate and responsive feedback.
 
 ---
+## Developer Diary Entry #16
+**Title:** Sprint 5 Start and Finish  
+**Date:** 1/06/25
+
+Sprint 5 focused on refining the user experience, gamification aspects and addressing feedback from previous sprints. The main improvements included replacing the Bootstrap progress bars with emoji-based progress bars for both the achievements and study timer pages, making progress more visually engaging and accessible. The motivational quote feature was updated to rotate every 5 minutes, providing ongoing encouragement during study sessions. Session goal options were standardized to 30, 60, and 90 minutes for consistency across the app. I also resolved Content Security Policy (CSP) issues by moving all inline JavaScript into external files, ensuring compatibility and improved security. Extensive testing confirmed that the emoji progress bar, motivational quotes, and session goal logic all functioned as intended. This sprint delivered a more polished and motivating interface, setting the stage for future enhancements.
+
+
+
+---
