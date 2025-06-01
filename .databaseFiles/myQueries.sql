@@ -47,3 +47,5 @@
     date TEXT NOT NULL,  -- e.g., '2025-05-30'
     seconds INTEGER NOT NULL
 --);
+
+--ALTER TABLE users ADD COLUMN avatar TEXT DEFAULT '🙂';

@@ -1,8 +1,31 @@
-{% extends "layout.html" %} {% block title %}Profile{% endblock %} {% block
-content %}
+{% extends "layout.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
 <div class="container mt-5">
   <h1>Profile</h1>
   {% if user %}
+  <!-- User Stats Card -->
+  <div class="card bg-dark text-light mb-4">
+    <div class="card-body">
+      <div class="mb-3" style="font-size:2.5rem;">{{ user.avatar or '🙂' }}</div>
+      <h4 class="card-title mb-3">{{ user.username }}</h4>
+      <div class="mb-2">
+        <span class="badge bg-success fs-6">⭐ XP: {{ user.xp or 0 }}</span>
+        <span class="badge bg-primary fs-6">🏅 Level: {{ user.level or 1 }}</span>
+        <span class="badge bg-info text-dark fs-6">⏱️ Total Study Hours: {{ user.total_study_hours or 0 }}</span>
+      </div>
+      <!-- Progress Bar to Next Level -->
+      <div class="mb-2">
+        <label class="form-label text-light">Progress to Next Level:</label>
+        <div class="progress" style="height: 1.5rem;">
+          <div class="progress-bar bg-warning text-dark" role="progressbar"
+            style="width: {{ user.progress_to_next_level or 0 }}%; font-size:1rem;">
+            {{ user.progress_to_next_level or 0 }}%
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
   <form method="POST" action="{{ url_for('update_profile') }}">
     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <div class="form-group">
@@ -41,6 +64,20 @@ content %}
       {% if password_error %}
       <div class="alert alert-danger mt-2">{{ password_error }}</div>
       {% endif %}
+    </div>
+    <div class="form-group">
+      <label for="avatar">Avatar (Emoji)</label>
+      <input
+        type="text"
+        class="form-control"
+        id="avatar"
+        name="avatar"
+        value="{{ user.avatar or '🙂' }}"
+        maxlength="2"
+        pattern="[\u263a-\U0001f9ff]{1,2}"
+        title="Enter a single emoji"
+        required
+      />
     </div>
     <button type="submit" class="btn btn-primary">Update Profile</button>
   </form>

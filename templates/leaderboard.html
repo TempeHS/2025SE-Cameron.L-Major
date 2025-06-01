@@ -14,7 +14,6 @@
   <!-- Podium for Top 3 -->
   <div class="row justify-content-center align-items-end mb-4" style="min-height: 160px;">
     {% set medals = ['🥇','🥈','🥉'] %}
-    {% set avatars = ['🦸','🧙','🧑‍🚀','🧑‍💻','🦹','🧑‍🎤','🧑‍🏫','🧑‍🔬','🧑‍🎨','🧑‍🌾'] %}
     {% for i in [1,0,2] %}
       {% if leaderboard|length > i %}
       <div class="col-4 text-center">
@@ -29,7 +28,7 @@
           box-shadow: 0 4px 16px #0002;
           ">
           {{ medals[i] }}<br>
-          <span style="font-size:2.5rem;">{{ avatars[i] }}</span><br>
+          <span style="font-size:2.5rem;">{{ leaderboard[i].avatar or '🙂' }}</span><br>
           <span style="font-size:1.2rem;">
             {{ leaderboard[i].username }}
             {% if leaderboard[i].username == session['username'] %}
@@ -70,7 +69,7 @@
         <td>
           {% if loop.index0 == 0 %}🥇{% elif loop.index0 == 1 %}🥈{% elif loop.index0 == 2 %}🥉{% else %}{{ loop.index }}{% endif %}
         </td>
-        <td style="font-size:1.5rem;">{{ avatars[loop.index0 % avatars|length] }}</td>
+        <td style="font-size:1.5rem;">{{ user.avatar or '🙂' }}</td>
         <td>
           {{ user.username }}
           {% if user.username == session['username'] %}

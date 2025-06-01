@@ -219,6 +219,7 @@ def register_main_routes(app):
         new_username = basic_sanitize_input(request.form["username"])
         new_password = request.form["password"]  # Password validation is done separately
         current_username = session['username']
+        avatar = request.form.get("avatar", "🙂") 
         
         username_error = None
         password_error = None
@@ -240,7 +241,7 @@ def register_main_routes(app):
                 user = dbHandler.get_user(current_username)
                 return render_template("profile.html", user=user, username_error=username_error, password_error=password_error)
             
-            dbHandler.update_user_profile(current_username, email, new_username, hashed_password)
+            dbHandler.update_user_profile(current_username, email, new_username, hashed_password, avatar)
             if new_username != current_username:
                 flash("Username updated successfully.")
                 session['username'] = new_username  # Update session username if changed
@@ -491,6 +492,7 @@ def register_main_routes(app):
         leaderboard = [
             {
                 "username": row["username"],
+                "avatar": dbHandler.get_user(row["username"])["avatar"] if dbHandler.get_user(row["username"]) else "🙂",
                 "study_hours": round((row["study_seconds"] or 0) / 3600, 1),
                 "streak": get_streak(row["username"])
             }
