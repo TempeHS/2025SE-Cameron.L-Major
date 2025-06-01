@@ -67,6 +67,12 @@
               <a class="nav-link" href="{{ url_for('signup') }}">Sign Up</a>
             </li>
             {% endif %}
+            <!-- Theme toggle button -->
+            <li class="nav-item d-flex align-items-center">
+              <button id="theme-toggle" class="btn btn-outline-secondary btn-sm ms-2" type="button">
+                ☀️ Light Mode
+              </button>
+            </li>
           </ul>
         </div>
       </div>
@@ -84,7 +90,8 @@
 
     <!-- Bootstrap JavaScript Bundle -->
     <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
-
+    <!-- Theme toggle script -->
+    <script src="{{ url_for('static', filename='js/theme-toggle.js') }}"></script>
     <!-- Page-specific scripts (e.g., study_timer.js) -->
     {% block scripts %}{% endblock %}
   </body>

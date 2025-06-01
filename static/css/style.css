@@ -5,10 +5,55 @@
   box-sizing: border-box;
 }
 
+/* --- THEME VARIABLES --- */
+:root {
+  --bg: #18181b;
+  --card-bg: #232946;
+  --text: #e0e0e0;
+  --navbar-bg: linear-gradient(90deg, #232946 0%, #10b981 100%);
+  --footer-bg: linear-gradient(90deg, #232946 0%, #10b981 100%);
+  --input-bg: #232946;
+  --input-border: #10b981;
+  --input-focus-bg: #16161a;
+  --input-focus-text: #fff;
+  --accent: #10b981;
+  --btn-primary-bg: #10b981;
+  --btn-primary-hover-bg: #6366f1;
+  --btn-primary-border: #10b981;
+  --btn-primary-hover-border: #6366f1;
+  --scrollbar-thumb: #10b981;
+  --scrollbar-track: #232946;
+  --shadow: 0 8px 32px rgba(16, 185, 129, 0.10);
+  --container-bg: rgba(35,41,70,0.97);
+  --label: #fff;
+}
+
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --card-bg: #e0e7ef;
+  --text: #22223b;
+  --navbar-bg: linear-gradient(90deg, #e0e7ef 0%, #10b981 100%);
+  --footer-bg: linear-gradient(90deg, #e0e7ef 0%, #10b981 100%);
+  --input-bg: #fff;
+  --input-border: #10b981;
+  --input-focus-bg: #e0e7ef;
+  --input-focus-text: #22223b;
+  --accent: #10b981;
+  --btn-primary-bg: #10b981;
+  --btn-primary-hover-bg: #6366f1;
+  --btn-primary-border: #10b981;
+  --btn-primary-hover-border: #6366f1;
+  --scrollbar-thumb: #10b981;
+  --scrollbar-track: #e0e7ef;
+  --shadow: 0 8px 32px rgba(16, 185, 129, 0.10);
+  --container-bg: rgba(224,231,239,0.97);
+  --label: #22223b;
+}
+
 body {
   font-family: "Poppins", "Roboto", Arial, sans-serif;
-  background: linear-gradient(135deg, #232946 0%, #16161a 100%);
-  color: #e0e0e0;
+  background: var(--bg);
+  color: var(--text);
   line-height: 1.6;
 }
 
@@ -16,13 +61,13 @@ body {
   max-width: 900px;
   margin: 0 auto;
   padding: 20px;
-  background: rgba(35,41,70,0.97);
+  background: var(--container-bg);
   border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(16, 185, 129, 0.10);
+  box-shadow: var(--shadow);
 }
 
 .navbar {
-  background: linear-gradient(90deg, #232946 0%, #10b981 100%);
+  background: var(--navbar-bg) !important;
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
   font-weight: 700;
   border-radius: 0 0 18px 18px;
@@ -32,7 +77,7 @@ body {
   color: #fff !important;
   font-weight: bold;
   font-size: 2rem;
-  text-shadow: 0 0 8px #10b981;
+  text-shadow: 0 0 8px var(--accent);
   display: flex;
   align-items: center;
 }
@@ -56,50 +101,55 @@ body {
   background: transparent;
 }
 
+[data-theme="light"] .navbar-nav .nav-item .nav-link {
+  color: var(--text) !important;
+  text-shadow: none;
+}
+
 .navbar-nav .nav-item .nav-link:hover,
 .navbar-nav .nav-item .nav-link:focus {
   color: #232946 !important;
-  background: #10b981;
+  background: var(--accent);
   text-shadow: none;
 }
 
 .navbar-toggler {
-  border-color: #10b981;
+  border-color: var(--accent);
 }
 
 .navbar-toggler-icon {
-  background-color: #10b981;
+  background-color: var(--accent);
 }
 
 .btn-primary {
-  background-color: #10b981;
-  border-color: #10b981;
+  background-color: var(--btn-primary-bg);
+  border-color: var(--btn-primary-border);
   border-radius: 8px;
 }
 
 .btn-primary:hover {
-  background-color: #6366f1;
-  border-color: #6366f1;
+  background-color: var(--btn-primary-hover-bg);
+  border-color: var(--btn-primary-hover-border);
 }
 
 .form-control {
   border-radius: 8px;
   padding: 10px;
   font-size: 1em;
-  background: #232946;
-  color: #e0e0e0;
-  border: 1px solid #10b981;
+  background: var(--input-bg);
+  color: var(--text);
+  border: 1px solid var(--input-border);
 }
 
 .form-control:focus {
-  border-color: #10b981;
+  border-color: var(--input-border);
   box-shadow: 0 0 5px rgba(16, 185, 129, 0.5);
-  background: #16161a;
-  color: #fff;
+  background: var(--input-focus-bg);
+  color: var(--input-focus-text);
 }
 
 footer {
-  background: linear-gradient(90deg, #232946 0%, #10b981 100%);
+  background: var(--footer-bg);
   color: #fff;
   padding: 1.5rem 0;
   text-align: center;
@@ -115,13 +165,12 @@ footer {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #10b981;
+  background: var(--scrollbar-thumb);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-track {
-  background: #232946;
+  background: var(--scrollbar-track);
 }
-
 
 /* Study Timer Responsive Fixes */
 @media (max-width: 767px) {
@@ -174,15 +223,15 @@ footer {
 
 /* Focus styles for accessibility */
 a:focus, button:focus, .form-control:focus, select:focus {
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  box-shadow: 0 0 0 2px #232946;
+  box-shadow: 0 0 0 2px var(--card-bg);
 }
 
 /* High contrast for important buttons on focus/hover */
 .btn:focus, .btn:hover {
   filter: brightness(1.15);
-  outline: 2px solid #10b981;
+  outline: 2px solid var(--accent);
 }
 
 /* Skip to content link (add to your HTML for best accessibility) */
@@ -190,8 +239,8 @@ a:focus, button:focus, .form-control:focus, select:focus {
   position: absolute;
   left: -999px;
   top: 10px;
-  background: #10b981;
-  color: #232946;
+  background: var(--accent);
+  color: var(--card-bg);
   padding: 0.5em 1em;
   z-index: 1000;
   border-radius: 8px;
@@ -203,7 +252,7 @@ a:focus, button:focus, .form-control:focus, select:focus {
 
 /* Ensure sufficient contrast for form labels and text */
 .form-label, label {
-  color: #fff;
+  color: var(--label);
   font-weight: 600;
   letter-spacing: 0.5px;
 }
