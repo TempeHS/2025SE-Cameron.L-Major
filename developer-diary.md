@@ -144,4 +144,6 @@ Sprint 3 was dedicated to the achievements system. I designed the achievements d
 **Title:** Sprint 4 Start and Finish  
 **Date:** 
 
+Sprint 4 was dedicated to enhance the gamification aspect, I added visual rank badges for the top 1, 2, 3, 5, 10, and 20 users, as well as fun achievement badges for all participants. The leaderboard UI was improved with a podium for the top three users, filter buttons for different time periods (all time, this week, today), and a personal highlight for the logged-in user. I also refined the progress bar logic on both the study timer and achievements pages to ensure accurate and responsive feedback.
+
 ---
