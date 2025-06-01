@@ -122,31 +122,113 @@ footer {
   background: #232946;
 }
 
-/* Responsive adjustments */
+
+/* Study Timer Responsive Fixes */
 @media (max-width: 767px) {
-  .navbar-nav {
-    text-align: center;
+  #study-timer {
+    padding: 1rem !important;
+    min-width: 0;
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 12px;
   }
-  .form-row {
-    flex-direction: column;
-    align-items: stretch;
+  #study-timer .display-1 {
+    font-size: 2.5rem !important;
   }
-  .form-group {
-    margin-bottom: 15px;
+  #study-timer .btn-lg {
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
   }
-  .container {
-    padding: 10px;
+  #study-timer .w-75 {
+    width: 100% !important;
+  }
+  #study-timer .gap-4 {
+    gap: 1rem !important;
+  }
+  #study-timer .form-select,
+  #study-timer .form-label {
+    font-size: 1rem;
+  }
+  #study-timer .badge {
+    font-size: 1rem !important;
+    margin: 0.1rem;
+  }
+  #study-timer .btn {
+    margin-bottom: 0.5rem;
+  }
+  #study-timer .d-flex.flex-wrap.gap-4 {
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    align-items: stretch !important;
   }
 }
 
-/* --- Progress Bar Color Fix --- */
-.progress .progress-bar.bg-success,
-.progress-bar.bg-success {
-  background-color: #198754 !important;
+/* Make emoji progress bar wrap if needed */
+#emoji-progress-bar {
+  word-break: break-all;
+  display: inline-block;
+  max-width: 100%;
 }
 
-/* --- Force Bootstrap Progress Bar Green --- */
-.progress-bar.bg-success {
-  --bs-progress-bar-bg: #198754 !important;
-  background-color: #198754 !important;
+/* --- Accessibility Improvements --- */
+
+/* Focus styles for accessibility */
+a:focus, button:focus, .form-control:focus, select:focus {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #232946;
+}
+
+/* High contrast for important buttons on focus/hover */
+.btn:focus, .btn:hover {
+  filter: brightness(1.15);
+  outline: 2px solid #10b981;
+}
+
+/* Skip to content link (add to your HTML for best accessibility) */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 10px;
+  background: #10b981;
+  color: #232946;
+  padding: 0.5em 1em;
+  z-index: 1000;
+  border-radius: 8px;
+  font-weight: bold;
+}
+.skip-link:focus {
+  left: 10px;
+}
+
+/* Ensure sufficient contrast for form labels and text */
+.form-label, label {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive font sizes for better readability */
+html {
+  font-size: 16px;
+}
+@media (max-width: 600px) {
+  html {
+    font-size: 15px;
+  }
+  .form-label, label {
+    font-size: 1rem;
+  }
+}
+
+/* Add visually hidden utility for screen readers */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
 }

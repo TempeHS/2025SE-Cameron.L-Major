@@ -18,14 +18,22 @@
 
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='icons/favicon.ico') }}" />
+
+    <!-- App Branding: Add Open Graph for better sharing (optional) -->
+    <meta property="og:title" content="GameStudy - Study Smarter" />
+    <meta property="og:description" content="Gamify your study sessions and stay motivated with GameStudy!" />
+    <meta property="og:image" content="{{ url_for('static', filename='images/logo.png') }}" />
   </head>
 
   <body>
+    <!-- Accessibility: Skip to main content link -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
     {% if not hide_navbar %}
     <nav class="navbar navbar-expand-lg sticky-top">
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('home') }}">
-          <span class="emoji">🎮</span>
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="GameStudy Logo" style="height:2.7rem;vertical-align:middle;margin-right:0.7rem;">
           GameStudy
         </a>
         <button
@@ -65,11 +73,12 @@
     </nav>
     {% endif %}
 
-    <main class="container">
+    <main class="container" id="main-content" tabindex="-1">
       {% block content %}{% endblock %}
     </main>
 
     <footer>
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="GameStudy Logo" style="height:2rem;vertical-align:middle;margin-right:0.5rem;">
       &copy; 2025 GameStudy &mdash; Study Smarter, Not Harder.
     </footer>
 

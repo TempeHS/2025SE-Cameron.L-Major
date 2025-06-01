@@ -69,12 +69,19 @@
       </div>
     </div>
   </div>
-
   <div class="text-center mt-5">
-    <img src="{{ url_for('static', filename='icons/logo.png') }}" alt="GameStudy Logo" style="height:5rem;filter:drop-shadow(0 0 12px #10b98188);" />
-    <h2 class="mt-4" style="color:#10b981;font-weight:800;">Ready to Level Up Your Learning?</h2>
+    <!-- Responsive, larger GIF -->
+    <img 
+      src="{{ url_for('static', filename='images/studyanimation.gif') }}" 
+      alt="Animated Learning" 
+      class="img-fluid"
+      style="max-width: 100%; height: 22vw; min-height: 150px; max-height: 350px; filter:drop-shadow(0 0 16px #10b98188); border-radius:12px; object-fit: contain;"
+    />
+    <h2 class="mt-4" style="color:#10b981;font-weight:800;">
+      Track Your Progress. Climb the Leaderboard. <br> Make Every Study Session Count! 🏆⏱️
+    </h2>
     <p class="lead" style="color:#bfc9d1;">
-      Track your study progress, set goals, and earn rewards as you learn!
+      Use the Study Tracker to log your hours and see how you stack up against others. The more you study, the higher you rise!
     </p>
   </div>
 </div>
