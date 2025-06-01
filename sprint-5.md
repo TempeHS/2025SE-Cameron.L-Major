@@ -2,20 +2,19 @@
 
 ## **Backlog Tasks**
 
-- [ ] Build user profile page:
+- [X] Build user profile page:
   - Display XP, level, total study hours, and progress bar.
   - Allow users to upload/change avatar and nickname.
-- [ ] Expand XP system:
+- [X] Expand XP system:
   - Adjust XP gain logic for different study durations.
   - Add level-up thresholds and dynamic level calculation.
 - [ ] Visual gamification:
   - Show XP progress bar or meter.
   - Animate XP gain after each session.
-  - Add celebratory feedback for level-ups.
-- [ ] Persist XP and level info across sessions using database updates.
-- [ ] Prevent XP manipulation (validate timer backend).
-- [ ] Create UI feedback for when XP is earned or milestones are reached.
-- [ ] Style the game interface to be playful and motivating (use color, icons, animations).
+- [X] Persist XP and level info across sessions using database updates.
+- [X] Prevent XP manipulation (validate timer backend).
+- [X] Create UI feedback for when XP is earned or milestones are reached.
+- [X] Style the game interface to be playful and motivating (use color, icons, animations).
 
 ## **Increment**
 

@@ -93,6 +93,26 @@ function loadState() {
   running = savedRunning === '1';
 }
 
+// --- Emoji Progress Bar and Motivational Quote Logic ---
+window.updateProgressBar = function() {
+  const emojiBarElem = document.getElementById('emoji-progress-bar');
+  const emojiPercentElem = document.getElementById('emoji-progress-percent');
+  const sessionGoalSelect = document.getElementById('session-goal');
+  let sessionGoal = parseInt(sessionGoalSelect ? sessionGoalSelect.value : 30, 10);
+
+  const totalBlocks = 10;
+  let percent = 0;
+  if (window.elapsedSeconds !== undefined && sessionGoal > 0) {
+    percent = Math.min(100, (window.elapsedSeconds / (sessionGoal * 60)) * 100);
+  }
+  const filledBlocks = Math.round((percent / 100) * totalBlocks);
+  const emptyBlocks = totalBlocks - filledBlocks;
+  const emojiBar = "🟩".repeat(filledBlocks) + "⬜".repeat(emptyBlocks);
+
+  if (emojiBarElem) emojiBarElem.textContent = emojiBar;
+  if (emojiPercentElem) emojiPercentElem.textContent = Math.floor(percent) + "%";
+};
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log("DOM fully loaded");
   const startBtn = document.getElementById('start-btn');
@@ -221,6 +241,36 @@ document.addEventListener('DOMContentLoaded', function() {
   if (bgSelect && timerDiv) {
     bgSelect.addEventListener('change', function() {
       setFullscreenBg();
+    });
+  }
+
+  // --- Motivational Quotes ---
+  const quotes = [
+    "Stay focused and never give up!",
+    "Small steps every day lead to big results.",
+    "You’re closer than you think!",
+    "Consistency is the key to success.",
+    "Believe in yourself and all that you are."
+  ];
+  let quoteIdx = 0;
+  const quoteElem = document.getElementById('motivational-quote');
+  if (quoteElem) {
+    setInterval(() => {
+      quoteIdx = (quoteIdx + 1) % quotes.length;
+      quoteElem.textContent = quotes[quoteIdx];
+    }, 300000);
+  }
+
+  // Always show the emoji progress bar, even at 0%
+  window.updateProgressBar();
+
+  // Update progress bar when session goal changes
+  const sessionGoalSelect = document.getElementById('session-goal');
+  if (sessionGoalSelect) {
+    sessionGoalSelect.addEventListener('change', function() {
+      if (typeof window.updateProgressBar === "function") {
+        window.updateProgressBar();
+      }
     });
   }
 });

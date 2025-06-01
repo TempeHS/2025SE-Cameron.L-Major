@@ -54,7 +54,7 @@ def register_auth_routes(app):
     limiter = Limiter(
         get_remote_address,
         app=app,
-        default_limits=["100 per day", "10 per hour"]
+        default_limits=["100 per day", "20 per hour"]
     )
 
     @app.route("/signup", methods=["GET", "POST"])

@@ -430,7 +430,8 @@ def register_main_routes(app):
         return render_template(
             "achievements.html",
             all_achievements=all_achievements,
-            user_achievements=user_achievements
+            user_achievements=user_achievements,
+            user_xp=user_xp
         )
 
     @app.route("/leaderboard")

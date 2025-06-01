@@ -15,16 +15,15 @@
     <div class="mb-2 text-center w-100">
       <label for="session-goal" class="form-label text-light">Session Goal (minutes):</label>
       <select id="session-goal" class="form-select w-auto d-inline-block">
-        <option value="25">25</option>
-        <option value="50">50</option>
+        <option value="30">30</option>
+        <option value="60">60</option>
         <option value="90">90</option>
       </select>
     </div>
-    <!-- Progress Bar -->
-    <div class="w-75">
-      <div class="progress" style="height: 2rem;">
-        <div id="session-progress" class="progress-bar bg-success" role="progressbar" style="width: 0%; font-size:1.2rem;"></div>
-      </div>
+    <!-- Emoji Progress Bar -->
+    <div class="w-75 text-center">
+      <span id="emoji-progress-bar" style="font-family:monospace; font-size:2rem;"></span>
+      <span id="emoji-progress-percent" style="color:#10b981; font-size:1.2rem; margin-left: 8px;">0%</span>
     </div>
     <!-- Background Selector -->
     <div class="mb-2 text-center w-100">
@@ -61,42 +60,4 @@
 {% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/study_timer.js') }}"></script>
-<script>
-// Rotating motivational quotes
-const quotes = [
-  "Stay focused and never give up!",
-  "Small steps every day lead to big results.",
-  "You’re closer than you think!",
-  "Consistency is the key to success.",
-  "Believe in yourself and all that you are."
-];
-let quoteIdx = 0;
-setInterval(() => {
-  quoteIdx = (quoteIdx + 1) % quotes.length;
-  document.getElementById('motivational-quote').textContent = quotes[quoteIdx];
-}, 7000);
-
-// Progress bar logic
-const progressBar = document.getElementById('session-progress');
-const sessionGoalSelect = document.getElementById('session-goal');
-let sessionGoal = parseInt(sessionGoalSelect ? sessionGoalSelect.value : 25, 10);
-
-if (sessionGoalSelect) {
-  sessionGoalSelect.addEventListener('change', function() {
-    sessionGoal = parseInt(this.value, 10);
-    updateProgressBar();
-  });
-}
-
-function updateProgressBar() {
-  if (progressBar && window.elapsedSeconds !== undefined) {
-    const percent = Math.min(100, (window.elapsedSeconds / (sessionGoal * 60)) * 100);
-    progressBar.style.width = percent + "%";
-    progressBar.textContent = Math.floor(percent) + "%";
-  }
-}
-
-// Hook into timer update (study_timer.js should call updateProgressBar after updateDisplay)
-window.updateProgressBar = updateProgressBar;
-</script>
 {% endblock %}

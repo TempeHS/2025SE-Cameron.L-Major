@@ -138,3 +138,15 @@ footer {
     padding: 10px;
   }
 }
+
+/* --- Progress Bar Color Fix --- */
+.progress .progress-bar.bg-success,
+.progress-bar.bg-success {
+  background-color: #198754 !important;
+}
+
+/* --- Force Bootstrap Progress Bar Green --- */
+.progress-bar.bg-success {
+  --bs-progress-bar-bg: #198754 !important;
+  background-color: #198754 !important;
+}
