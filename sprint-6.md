@@ -16,11 +16,8 @@
 - [ ] Add **daily challenges** with XP rewards.
 - [ ] Build **progress tracking analytics** per topic or study goal.
 - [ ] Enable **profile customization** (themes, avatars).
-- [ ] Add **search functionality** for content or progress logs.
-- [ ] Display **XP leaderboards** filtered by time (daily, weekly, all-time).
 - [ ] Add **tooltips/tutorials** to onboard new users.
 - [ ] Introduce **dark mode** toggle.
-- [ ] (Optional) Add **audio feedback** for XP gain or achievement unlocks.
 
 ## **Increment**
 

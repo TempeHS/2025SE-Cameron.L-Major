@@ -142,7 +142,7 @@ Sprint 3 was dedicated to the achievements system. I designed the achievements d
 
 ## Developer Diary Entry #16
 **Title:** Sprint 4 Start and Finish  
-**Date:** 1/06/25
+**Date:** 31/05/25
 
 Sprint 4 was dedicated to enhance the gamification aspect, I added visual rank badges for the top 1, 2, 3, 5, 10, and 20 users, as well as fun achievement badges for all participants. The leaderboard UI was improved with a podium for the top three users, filter buttons for different time periods (all time, this week, today), and a personal highlight for the logged-in user. I also refined the progress bar logic on both the study timer and achievements pages to ensure accurate and responsive feedback.
 
@@ -153,6 +153,15 @@ Sprint 4 was dedicated to enhance the gamification aspect, I added visual rank b
 
 Sprint 5 focused on refining the user experience, gamification aspects and addressing feedback from previous sprints. The main improvements included replacing the Bootstrap progress bars with emoji-based progress bars for both the achievements and study timer pages, making progress more visually engaging and accessible. The motivational quote feature was updated to rotate every 5 minutes, providing ongoing encouragement during study sessions. Session goal options were standardized to 30, 60, and 90 minutes for consistency across the app. I also resolved Content Security Policy (CSP) issues by moving all inline JavaScript into external files, ensuring compatibility and improved security. Extensive testing confirmed that the emoji progress bar, motivational quotes, and session goal logic all functioned as intended. This sprint delivered a more polished and motivating interface, setting the stage for future enhancements.
 
+
+---
+
+## Developer Diary Entry #17
+**Title:** Sprint 6 Start 
+**Date:** 1/06/25
+
+
+Sprint 6 has begun, with the main focus on UI polish and preparing for advanced features. My immediate goals are to modernize the app’s look and feel, improve accessibility, and lay the groundwork for new motivational features. This sprint, I plan to enhance the dashboard with more dynamic elements, update the color palette and branding, and ensure accessibility improvements like better keyboard navigation and contrast. I have not yet started work on advanced features such as daily challenges with XP rewards or progress tracking analytics, but these are planned for the upcoming days in this sprint. The next steps will involve designing the database structure and backend logic for daily challenges, so users can receive new challenges each day and earn XP for completing them. Overall, Sprint 6 is set up to deliver both visual improvements and the foundation for new features to keep users engaged.
 
 
 ---

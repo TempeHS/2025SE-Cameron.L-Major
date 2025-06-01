@@ -45,17 +45,19 @@
   <div class="row g-4 mt-4">
     <!-- User Info -->
     <div class="col-lg-4">
-      <div class="bg-dark rounded shadow p-3 h-100">
-        <h3 style="color:#a5b4fc;">User Information</h3>
-        <ul class="list-group bg-dark rounded">
-          <li class="list-group-item bg-dark text-light border-secondary">
-            <strong>Username:</strong> {{ username }}
-          </li>
-          <li class="list-group-item bg-dark text-light border-secondary">
-            <strong>Email:</strong> {{ email }}
-          </li>
-        </ul>
-      </div>
+      <a href="/profile" style="text-decoration: none;">
+        <div class="bg-dark rounded shadow p-3 h-100" style="transition: box-shadow 0.2s;">
+          <h3 style="color:#a5b4fc;">User Information</h3>
+          <ul class="list-group bg-dark rounded">
+            <li class="list-group-item bg-dark text-light border-secondary">
+              <strong>Username:</strong> {{ username }}
+            </li>
+            <li class="list-group-item bg-dark text-light border-secondary">
+              <strong>Email:</strong> {{ email }}
+            </li>
+          </ul>
+        </div>
+      </a>
     </div>
 
     <!-- Navigation -->
@@ -65,10 +67,11 @@
         <ul class="list-group bg-dark rounded">
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/profile">Profile</a></li>
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/settings">Settings</a></li>
-          <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="{{ url_for('home_logged_in') }}">Home</a></li>
-          <!-- Optional: Study Timer link in navigation -->
           <li class="list-group-item bg-dark text-light border-secondary">
             <a class="text-success" href="{{ url_for('study_timer') }}">Study Timer</a>
+          </li>
+          <li class="list-group-item bg-dark text-light border-secondary">
+            <a class="text-success" href="{{ url_for('leaderboard') }}">Leaderboard</a>
           </li>
         </ul>
       </div>
