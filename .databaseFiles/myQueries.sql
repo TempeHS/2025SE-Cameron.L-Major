@@ -70,7 +70,13 @@
     FOREIGN KEY (challenge_id) REFERENCES challenges(id)
 --);
 
-INSERT INTO challenges (description, xp_reward) VALUES
-('Study for 30 minutes', 50),
-('Complete 2 study sessions', 40),
-('Log in today', 20);
+--INSERT INTO challenges (description, xp_reward) VALUES
+--('Study for 30 minutes', 50),
+--('Complete 2 study sessions', 40),
+--('Log in today', 20);
+
+--INSERT INTO challenges (description, xp_reward) VALUES
+--('Study for 60 minutes', 50),
+--('Complete 3 study sessions', 40),
+--('Study for 15 minutes without pausing', 25),
+--('Log a study session with a note', 20);

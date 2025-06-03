@@ -211,6 +211,47 @@ def register_main_routes(app):
             cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row2["id"],))
             cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row2["xp_reward"], user_id))
 
+        # --- Challenge: Study for 60 minutes ---
+        cur.execute("""
+            SELECT u.id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.user_id = ? AND u.date=? AND c.description='Study for 60 minutes'
+        """, (user_id, today))
+        row60 = cur.fetchone()
+        if row60 and not row60["completed"] and total_today >= 3600:
+            cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row60["id"],))
+            cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row60["xp_reward"], user_id))
+
+        # --- Challenge: Complete 3 study sessions ---
+        cur.execute("""
+            SELECT u.id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.user_id = ? AND u.date=? AND c.description='Complete 3 study sessions'
+        """, (user_id, today))
+        row3 = cur.fetchone()
+        if row3 and not row3["completed"] and sessions_today >= 3:
+            cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row3["id"],))
+            cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row3["xp_reward"], user_id))
+
+        # --- Challenge: Study for 15 minutes without pausing ---
+        cur.execute(
+            "SELECT id FROM study_sessions WHERE username=? AND date=? AND seconds>=900",
+            (session['username'], today)
+        )
+        row15 = cur.fetchone()
+        cur.execute("""
+            SELECT u.id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.user_id = ? AND u.date=? AND c.description='Study for 15 minutes without pausing'
+        """, (user_id, today))
+        row15c = cur.fetchone()
+        if row15 and row15c and not row15c["completed"]:
+            cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row15c["id"],))
+            cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row15c["xp_reward"], user_id))
+
         # Unlock XP-based achievements (pass cur!)
         new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp, cur)
 
