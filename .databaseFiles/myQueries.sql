@@ -49,3 +49,28 @@
 --);
 
 --ALTER TABLE users ADD COLUMN avatar TEXT DEFAULT '🙂';
+
+
+-- Challenge templates table (list of possible challenges)
+--CREATE TABLE IF NOT EXISTS challenges (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    description TEXT NOT NULL,
+    xp_reward INTEGER NOT NULL
+--);
+
+-- User's daily challenges (links users to challenges for a specific day)
+--CREATE TABLE IF NOT EXISTS user_daily_challenges (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    challenge_id INTEGER NOT NULL,
+    date TEXT NOT NULL,  -- e.g., '2025-06-03'
+    progress INTEGER DEFAULT 0,
+    completed INTEGER DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (challenge_id) REFERENCES challenges(id)
+--);
+
+INSERT INTO challenges (description, xp_reward) VALUES
+('Study for 30 minutes', 50),
+('Complete 2 study sessions', 40),
+('Log in today', 20);

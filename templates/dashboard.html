@@ -111,7 +111,34 @@
       </div>
     </div>
   </div>
-
+<!-- Daily Challenges Section -->
+<div class="row mt-5">
+  <div class="col-md-8 offset-md-2">
+    <div class="card shadow bg-dark text-light border-secondary">
+      <div class="card-header bg-dark text-light border-secondary" style="color:var(--accent);font-weight:bold;font-size:1.3rem;">
+        Today's Challenges
+      </div>
+      <ul class="list-group list-group-flush">
+        {% for ch in challenges %}
+          <li class="list-group-item bg-dark text-light border-secondary d-flex justify-content-between align-items-center {% if ch['completed'] %}text-success{% endif %}">
+            <span style="{% if ch['completed'] %}text-decoration: line-through; opacity: 0.7;{% endif %}">
+              {{ ch['description'] }}
+            </span>
+            <span>
+              +{{ ch['xp_reward'] }} XP
+              {% if ch['completed'] %}
+                <span class="badge bg-success ms-2" title="Completed">&#10003;</span>
+              {% endif %}
+            </span>
+          </li>
+        {% endfor %}
+        {% if not challenges %}
+          <li class="list-group-item bg-dark text-light border-secondary">No challenges assigned for today.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
   <div class="row mt-5">
     <div class="col-md-12 text-center">
       <!-- Larger, responsive GIF for dashboard -->

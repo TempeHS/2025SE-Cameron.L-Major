@@ -165,3 +165,15 @@ Sprint 6 has begun, with the main focus on UI polish and preparing for advanced 
 
 
 ---
+
+## Developer Diary Entry #18
+**Title:** Sprint 6 Advanced Features (Challenges)
+**Date:** 3/06/25
+
+Today I implemented the advanced daily challenges feature for GameStudy. I designed and created new challenge types such as "Study for 30 minutes" and "Complete 2 study sessions," and updated the backend logic to automatically track and complete these challenges based on user activity.Testing confirmed that challenges are assigned daily, tracked accurately, and update in real time as users study. 
+
+---
+
+## Developer Diary Entry #19
+**Title:** 
+**Date:** 

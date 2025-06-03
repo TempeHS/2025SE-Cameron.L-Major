@@ -1,13 +1,50 @@
 from flask import render_template, request, redirect, url_for, flash, session, jsonify
-from datetime import datetime, timedelta 
+from datetime import datetime, timedelta, date
 import userManagement as dbHandler
 import bcrypt
 from utils import validate_password, basic_sanitize_input
 from flask_wtf.csrf import validate_csrf
 import sqlite3
 import os
+import random
 
 def register_main_routes(app):
+    def get_db():
+        db_path = '.databaseFiles/database.db'
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+
+    def assign_daily_challenges(user_id, conn):
+        today = date.today().isoformat()
+        cur = conn.cursor()
+        # Check if already assigned
+        cur.execute(
+            "SELECT 1 FROM user_daily_challenges WHERE user_id=? AND date=?",
+            (user_id, today)
+        )
+        if cur.fetchone():
+            return  # Already assigned today
+
+        # Get all challenge IDs
+        cur.execute("SELECT id FROM challenges")
+        challenge_ids = [row['id'] for row in cur.fetchall()]
+        if not challenge_ids:
+            return
+        chosen = random.sample(challenge_ids, min(3, len(challenge_ids)))
+        for cid in chosen:
+            cur.execute(
+                "INSERT INTO user_daily_challenges (user_id, challenge_id, date) VALUES (?, ?, ?)",
+                (user_id, cid, today)
+            )
+        conn.commit()
+
+    def get_user_id(username, conn):
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM users WHERE username = ?", (username,))
+        row = cur.fetchone()
+        return row['id'] if row else None
+
     @app.route("/", methods=["GET"])
     @app.route("/index.html", methods=["GET"])
     def home():
@@ -17,26 +54,33 @@ def register_main_routes(app):
         else:
             return render_template("index.html")
 
-
-    def get_db():
-        db_path = '.databaseFiles/database.db'
-        conn = sqlite3.connect(db_path)
-        conn.row_factory = sqlite3.Row
-        return conn
-
-
     @app.route("/dashboard")
     def dashboard():
         if 'username' in session and 'email' in session:
             conn = get_db()
             cur = conn.cursor()
-            cur.execute("SELECT total_study_time, xp FROM users WHERE username = ?", (session['username'],))
+            cur.execute("SELECT total_study_time, xp, id FROM users WHERE username = ?", (session['username'],))
             user = cur.fetchone()
 
             total_seconds = user["total_study_time"] if user and user["total_study_time"] is not None else 0
             hours = total_seconds // 3600
             minutes = (total_seconds % 3600) // 60
             xp = user["xp"] if user and user["xp"] is not None else 0
+            user_id = user["id"] if user else None
+
+            # Assign daily challenges if needed
+            if user_id:
+                assign_daily_challenges(user_id, conn)
+
+            # Fetch today's challenges
+            today = date.today().isoformat()
+            cur.execute("""
+                SELECT c.description, c.xp_reward, u.progress, u.completed, u.challenge_id, u.id as user_challenge_id
+                FROM user_daily_challenges u
+                JOIN challenges c ON u.challenge_id = c.id
+                WHERE u.user_id=? AND u.date=?
+            """, (user_id, today))
+            challenges = cur.fetchall()
 
             # Fetch achievements
             cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
@@ -54,13 +98,146 @@ def register_main_routes(app):
                 study_minutes=minutes,
                 xp=xp,
                 achievements=achievements,
-                streak=streak
+                streak=streak,
+                challenges=challenges
             )
         else:
             flash("You need to log in first.")
             return redirect(url_for('login'))
 
-        
+    @app.route("/complete_challenge", methods=["POST"])
+    def complete_challenge():
+        if 'username' not in session:
+            return jsonify({"error": "Not logged in"}), 401
+
+        data = request.get_json()
+        user_challenge_id = data.get("user_challenge_id")
+        if not user_challenge_id:
+            return jsonify({"error": "Missing challenge ID"}), 400
+
+        conn = get_db()
+        cur = conn.cursor()
+        # Get challenge and user info
+        cur.execute("""
+            SELECT u.user_id, u.challenge_id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.id = ?
+        """, (user_challenge_id,))
+        row = cur.fetchone()
+        if not row or row["completed"]:
+            conn.close()
+            return jsonify({"error": "Invalid or already completed"}), 400
+
+        # Mark as completed
+        cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (user_challenge_id,))
+        # Award XP
+        cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row["xp_reward"], row["user_id"]))
+        conn.commit()
+        conn.close()
+        return jsonify({"success": True, "xp_awarded": row["xp_reward"]})
+
+    @app.route("/log_study_time", methods=["POST"])
+    def log_study_time():
+        if 'username' not in session:
+            return jsonify({"error": "Not logged in"}), 401
+
+        data = request.get_json()
+        seconds = data.get("seconds", 0)
+        try:
+            seconds = int(seconds)
+        except Exception:
+            return jsonify({"error": "Invalid data"}), 400
+
+        xp_earned = seconds // 60  # 1 XP per minute
+
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            UPDATE users
+            SET total_study_time = COALESCE(total_study_time, 0) + ?,
+                xp = COALESCE(xp, 0) + ?
+            WHERE username = ?
+            """,
+            (seconds, xp_earned, session['username'])
+        )
+        conn.commit()
+
+        # Fetch new XP value
+        cur.execute("SELECT xp, id FROM users WHERE username = ?", (session['username'],))
+        row = cur.fetchone()
+        new_xp = row['xp'] if row else 0
+        user_id = row['id'] if row else None
+
+        # Log today's session
+        today = datetime.now().strftime('%Y-%m-%d')
+        cur.execute(
+            "INSERT INTO study_sessions (username, date, seconds) VALUES (?, ?, ?)",
+            (session['username'], today, seconds)
+        )
+
+        # --- Challenge: Study for 30 minutes ---
+        cur.execute(
+            "SELECT SUM(seconds) FROM study_sessions WHERE username=? AND date=?",
+            (session['username'], today)
+        )
+        total_today = cur.fetchone()[0] or 0
+        cur.execute("""
+            SELECT u.id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.user_id = ? AND u.date=? AND c.description='Study for 30 minutes'
+        """, (user_id, today))
+        row30 = cur.fetchone()
+        if row30 and not row30["completed"] and total_today >= 1800:
+            cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row30["id"],))
+            cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row30["xp_reward"], user_id))
+
+        # --- Challenge: Complete 2 study sessions ---
+        cur.execute(
+            "SELECT COUNT(*) FROM study_sessions WHERE username=? AND date=?",
+            (session['username'], today)
+        )
+        sessions_today = cur.fetchone()[0]
+        cur.execute("""
+            SELECT u.id, u.completed, c.xp_reward
+            FROM user_daily_challenges u
+            JOIN challenges c ON u.challenge_id = c.id
+            WHERE u.user_id = ? AND u.date=? AND c.description='Complete 2 study sessions'
+        """, (user_id, today))
+        row2 = cur.fetchone()
+        if row2 and not row2["completed"] and sessions_today >= 2:
+            cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row2["id"],))
+            cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row2["xp_reward"], user_id))
+
+        # Unlock XP-based achievements (pass cur!)
+        new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp, cur)
+
+        # Unlock streak achievements and get current streak
+        new_streak_achievements, streak = check_streak_achievements(session['username'], cur)
+
+        # Optionally, fetch all achievements for display
+        cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
+        achievements = [{"name": r["achievement_name"], "unlocked_at": r["unlocked_at"]} for r in cur.fetchall()]
+
+        conn.commit()
+        conn.close()
+
+        # Combine all newly unlocked achievements for notification
+        new_achievements = new_xp_achievements + new_streak_achievements
+
+        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp}, streak: {streak})")
+        return jsonify({
+            "success": True,
+            "added_seconds": seconds,
+            "added_xp": xp_earned,
+            "new_xp": new_xp,
+            "streak": streak,
+            "new_achievements": new_achievements,
+            "achievements": achievements  # for dashboard display
+        })
+
     @app.route("/analytics")
     def analytics():
         if 'username' not in session:
@@ -73,34 +250,6 @@ def register_main_routes(app):
         top_projects = dbHandler.get_top_projects(user['username'])
         
         return render_template("analytics.html", user=user, stats=stats, recent_logs=recent_logs, top_projects=top_projects)
-
-    @app.route("/create_log", methods=["GET", "POST"])
-    def create_log():
-        if 'username' not in session:
-            flash("You need to log in first.")
-            return redirect(url_for('login'))
-        
-        if request.method == "GET":
-            current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            return render_template("create_log.html", current_datetime=current_datetime, username=session['username'])
-        if request.method == "POST":
-            try:
-                validate_csrf(request.form['csrf_token'])
-            except ValueError:
-                flash("CSRF token is missing or invalid.")
-                return redirect(url_for('create_log'))
-
-            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            developer_name = session['username']
-            project = basic_sanitize_input(request.form["project"])
-            content = basic_sanitize_input(request.form["content"])
-            code_snippet = basic_sanitize_input(request.form["code_snippet"])
-            repository = basic_sanitize_input(request.form.get("repository_link"))
-            
-            dbHandler.add_log(date, developer_name, project, content, code_snippet, repository)
-            flash("Log created successfully!")
-            return redirect(url_for("dashboard"))
-
 
     @app.route("/home_logged_in", methods=["GET"])
     def home_logged_in():
@@ -126,74 +275,6 @@ def register_main_routes(app):
             leaderboard=leaderboard
         )
 
-    @app.route("/search_logs", methods=["GET"])
-    def search_logs():
-        """Search logs by developer, date, and project."""
-        if 'username' not in session:
-            flash("You need to log in first.")
-            return redirect(url_for('login'))
-        
-        developer = basic_sanitize_input(request.args.get('developer'))
-        date = basic_sanitize_input(request.args.get('date'))
-        project = basic_sanitize_input(request.args.get('project'))
-        sort_by = basic_sanitize_input(request.args.get('sort_by', 'date'))
-        sort_order = basic_sanitize_input(request.args.get('sort_order', 'asc'))
-        
-        page = request.args.get('page', 1, type=int)
-        per_page = 5
-        logs = dbHandler.search_logs(developer, date, project, sort_by, sort_order)
-        total_logs = len(logs)  # Assuming search_logs returns all matching logs
-        print(f"Logs passed to template: {logs}")  # Debug print
-        return render_template("home_logged_in.html", username=session['username'], email=session['email'], logs=logs, page=page, per_page=per_page, total_logs=total_logs)
-
-    @app.route("/edit_log/<int:log_id>", methods=["GET", "POST"])
-    def edit_log(log_id):
-        if 'username' not in session:
-            flash("You need to log in first.")
-            return redirect(url_for('login'))
-
-        log = dbHandler.get_log_by_id(log_id)
-        if not log or not dbHandler.is_log_editable(log_id, session['username']):
-            flash("You do not have permission to edit this log.")
-            return redirect(url_for('dashboard'))
-
-        if request.method == "GET":
-            return render_template("edit_log.html", log=log)
-        if request.method == "POST":
-            try:
-                validate_csrf(request.form['csrf_token'])
-            except ValueError:
-                flash("CSRF token is missing or invalid.")
-                return render_template("edit_log.html", log=log, error="CSRF token is missing or invalid.")
-
-            project = basic_sanitize_input(request.form["project"])
-            content = basic_sanitize_input(request.form["content"])
-            code_snippet = basic_sanitize_input(request.form["code_snippet"])
-            
-            dbHandler.update_log(log_id, project, content, code_snippet)
-            flash("Log updated successfully!")
-            return redirect(url_for("dashboard"))
-
-    @app.route("/delete_log/<int:log_id>", methods=["POST"])
-    def delete_log(log_id):
-        if 'username' not in session:
-            flash("You need to log in first.")
-            return redirect(url_for('login'))
-
-        try:
-            validate_csrf(request.form['csrf_token'])
-        except ValueError:
-            flash("CSRF token is missing or invalid.")
-            return redirect(url_for('dashboard'))
-
-        if not dbHandler.is_log_deletable(log_id, session['username']):
-            flash("You do not have permission to delete this log.")
-            return redirect(url_for('dashboard'))
-
-        dbHandler.delete_log(log_id)
-        flash("Log deleted successfully!")
-        return redirect(url_for("dashboard"))
-    
     @app.route("/profile", methods=["GET"])
     def profile():
         if 'username' not in session:
@@ -258,73 +339,6 @@ def register_main_routes(app):
         
         return redirect(url_for('profile'))
 
-
-    @app.route("/log_study_time", methods=["POST"])
-    def log_study_time():
-        if 'username' not in session:
-            return jsonify({"error": "Not logged in"}), 401
-
-        data = request.get_json()
-        seconds = data.get("seconds", 0)
-        try:
-            seconds = int(seconds)
-        except Exception:
-            return jsonify({"error": "Invalid data"}), 400
-
-        xp_earned = seconds // 60  # 1 XP per minute
-
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute(
-            """
-            UPDATE users
-            SET total_study_time = COALESCE(total_study_time, 0) + ?,
-                xp = COALESCE(xp, 0) + ?
-            WHERE username = ?
-            """,
-            (seconds, xp_earned, session['username'])
-        )
-        conn.commit()
-
-        # Fetch new XP value
-        cur.execute("SELECT xp FROM users WHERE username = ?", (session['username'],))
-        row = cur.fetchone()
-        new_xp = row['xp'] if row else 0
-
-        # Log today's session
-        today = datetime.now().strftime('%Y-%m-%d')
-        cur.execute(
-            "INSERT INTO study_sessions (username, date, seconds) VALUES (?, ?, ?)",
-            (session['username'], today, seconds)
-        )
-
-        # Unlock XP-based achievements (pass cur!)
-        new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp, cur)
-
-        # Unlock streak achievements and get current streak
-        new_streak_achievements, streak = check_streak_achievements(session['username'], cur)
-
-        # Optionally, fetch all achievements for display
-        cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
-        achievements = [{"name": r["achievement_name"], "unlocked_at": r["unlocked_at"]} for r in cur.fetchall()]
-
-        conn.commit()
-        conn.close()
-
-        # Combine all newly unlocked achievements for notification
-        new_achievements = new_xp_achievements + new_streak_achievements
-
-        print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp}, streak: {streak})")
-        return jsonify({
-            "success": True,
-            "added_seconds": seconds,
-            "added_xp": xp_earned,
-            "new_xp": new_xp,
-            "streak": streak,
-            "new_achievements": new_achievements,
-            "achievements": achievements  # for dashboard display
-        })
-
     def check_and_unlock_achievements(username, xp, cur):
         print(f"DEBUG: Checking achievements for {username} with XP {xp}")
         milestones = [
@@ -347,7 +361,6 @@ def register_main_routes(app):
                 cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
                 unlocked.append(name)
         return unlocked
-
 
     def get_study_streak(username,cur):
         streak = 0
