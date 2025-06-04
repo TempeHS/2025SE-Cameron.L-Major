@@ -2,24 +2,24 @@
 
 ## **Backlog Tasks**
 
-- [ ] Set up project environment and repository structure.
-- [ ] Configure development tools and dependencies (e.g., Python packages, linters).
-- [ ] Implement user signup form with:
+- [X] Set up project environment and repository structure.
+- [X] Configure development tools and dependencies (e.g., Python packages, linters).
+- [X] Implement user signup form with:
   - Username/Email field.
   - Password field.
   - Signup button.
-- [ ] Design a responsive and mobile-friendly signup and login pages.
-- [ ] Create backend routes for:
+- [X] Design a responsive and mobile-friendly signup and login pages.
+- [X] Create backend routes for:
   - `/signup`: receive and validate user registration data.
   - `/login`: authenticate users securely.
   - `/logout`: clear user session.
-- [ ] Securely store passwords using hashing (e.g., bcrypt).
-- [ ] Manage user sessions securely with:
+- [X] Securely store passwords using hashing (e.g., bcrypt).
+- [X] Manage user sessions securely with:
   - Session creation on login.
   - Session expiration for security.
-- [ ] Implement error handling and display user-friendly messages for failed login/signup.
-- [ ] Write basic tests for authentication routes and functionality.
-- [ ] Integrate security best practices at every step (e.g., input validation, CSRF protection).
+- [x] Implement error handling and display user-friendly messages for failed login/signup.
+- [X] Write basic tests for authentication routes and functionality.
+- [X] Integrate security best practices at every step (e.g., input validation, CSRF protection).
 
 ## **Increment**
 

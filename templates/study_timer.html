@@ -5,8 +5,10 @@
   <div id="study-timer"
   class="d-flex flex-column align-items-center justify-content-center gap-4 shadow-lg rounded p-5 w-100"
   style="background-size:cover; background-position:center; min-height:60vh;">
-  <!-- Big Emoji -->
-    <div class="text-center" style="font-size:4rem;">📚✨</div>
+  <!-- Top Photo -->
+  <div class="text-center">
+    <img src="{{ url_for('static', filename='images/topstudy.png') }}" alt="Study Mascot" style="max-width: 528px; max-height: 528px;">
+  </div>
     <!-- Rotating Motivational Quote -->
     <div id="motivational-quote" class="text-center text-light mb-2" style="font-style:italic; font-size:1.5rem;">
       "Stay focused and never give up!"
@@ -46,13 +48,6 @@
       <button id="reset-btn" class="btn btn-danger btn-lg" disabled>Reset</button>
       <button id="save-btn" class="btn btn-primary btn-lg" disabled>Save</button>
       <button id="fullscreen-btn" class="btn btn-secondary btn-lg">Fullscreen</button>
-    </div>
-    <!-- Achievements Preview (static, cool badges) -->
-    <div class="mt-3 text-center">
-      <span class="badge bg-success fs-5">🚀 Ready to Launch</span>
-      <span class="badge bg-info fs-5">💡 Focus Mode</span>
-      <span class="badge bg-warning text-dark fs-5">⏳ Time Master</span>
-      <span class="badge bg-primary fs-5">🎯 Goal Getter</span>
     </div>
         <!-- Subject Management Section -->
     <div class="d-flex flex-column align-items-center w-100 mt-4">

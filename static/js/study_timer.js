@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(() => {
       quoteIdx = (quoteIdx + 1) % quotes.length;
       quoteElem.textContent = quotes[quoteIdx];
-    }, 300000);
+    }, 30000);
   }
 
   // Always show the emoji progress bar, even at 0%

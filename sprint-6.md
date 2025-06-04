@@ -14,11 +14,12 @@
 
 ### Advanced Features
 - [X] Add **daily challenges** with XP rewards.
-- [ ] Build **progress tracking analytics** per topic or study goal.
-- [ ] Enable **profile customization** (themes, avatars).
-- [ ] Add **tooltips/tutorials** to onboard new users.
+- [X] Build **progress tracking analytics** per topic or study goal.
+- [X] Enable **profile customization** (themes, avatars).
+- [ ] Optional: Add **tooltips/tutorials** to onboard new users.
 - [X] Introduce **dark mode** toggle.
 - [ ] Optional Idea -> Image of garden that changes as study session continues
+- [ ] Optional Idea -> stats page
 
 ## **Increment**
 
