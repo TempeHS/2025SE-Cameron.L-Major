@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, date
 import userManagement as dbHandler
 import bcrypt
 from utils import validate_password, basic_sanitize_input
-from flask_wtf.csrf import validate_csrf
+from flask_wtf.csrf import validate_csrf, generate_csrf
 import sqlite3
 import os
 import random
@@ -14,6 +14,32 @@ def register_main_routes(app):
         conn = sqlite3.connect(db_path)
         conn.row_factory = sqlite3.Row
         return conn
+
+    def get_user_subjects(username):
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("SELECT subject_name FROM subjects WHERE username=?", (username,))
+        subjects = [row["subject_name"] for row in cur.fetchall()]
+        conn.close()
+        return subjects
+
+    @app.route("/add_subject", methods=["POST"])
+    def add_subject():
+        if 'username' not in session:
+            return redirect(url_for('login'))
+        try:
+            validate_csrf(request.form['csrf_token'])
+        except Exception:
+            flash("CSRF token is missing or invalid.")
+            return redirect(url_for('study_timer'))
+        subject_name = request.form["subject_name"].strip()
+        if subject_name:
+            conn = get_db()
+            cur = conn.cursor()
+            cur.execute("INSERT INTO subjects (username, subject_name) VALUES (?, ?)", (session['username'], subject_name))
+            conn.commit()
+            conn.close()
+        return redirect(url_for('study_timer'))
 
     def assign_daily_challenges(user_id, conn):
         today = date.today().isoformat()
@@ -48,7 +74,6 @@ def register_main_routes(app):
     @app.route("/", methods=["GET"])
     @app.route("/index.html", methods=["GET"])
     def home():
-        """Render the home page."""
         if 'username' in session:
             return redirect(url_for('home_logged_in'))
         else:
@@ -117,7 +142,6 @@ def register_main_routes(app):
 
         conn = get_db()
         cur = conn.cursor()
-        # Get challenge and user info
         cur.execute("""
             SELECT u.user_id, u.challenge_id, u.completed, c.xp_reward
             FROM user_daily_challenges u
@@ -129,9 +153,7 @@ def register_main_routes(app):
             conn.close()
             return jsonify({"error": "Invalid or already completed"}), 400
 
-        # Mark as completed
         cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (user_challenge_id,))
-        # Award XP
         cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row["xp_reward"], row["user_id"]))
         conn.commit()
         conn.close()
@@ -144,6 +166,7 @@ def register_main_routes(app):
 
         data = request.get_json()
         seconds = data.get("seconds", 0)
+        subject = data.get("subject", "General")
         try:
             seconds = int(seconds)
         except Exception:
@@ -164,17 +187,15 @@ def register_main_routes(app):
         )
         conn.commit()
 
-        # Fetch new XP value
         cur.execute("SELECT xp, id FROM users WHERE username = ?", (session['username'],))
         row = cur.fetchone()
         new_xp = row['xp'] if row else 0
         user_id = row['id'] if row else None
 
-        # Log today's session
         today = datetime.now().strftime('%Y-%m-%d')
         cur.execute(
-            "INSERT INTO study_sessions (username, date, seconds) VALUES (?, ?, ?)",
-            (session['username'], today, seconds)
+            "INSERT INTO study_sessions (username, date, seconds, subject) VALUES (?, ?, ?, ?)",
+            (session['username'], today, seconds, subject)
         )
 
         # --- Challenge: Study for 30 minutes ---
@@ -252,20 +273,14 @@ def register_main_routes(app):
             cur.execute("UPDATE user_daily_challenges SET completed=1 WHERE id=?", (row15c["id"],))
             cur.execute("UPDATE users SET xp = xp + ? WHERE id=?", (row15c["xp_reward"], user_id))
 
-        # Unlock XP-based achievements (pass cur!)
         new_xp_achievements = check_and_unlock_achievements(session['username'], new_xp, cur)
-
-        # Unlock streak achievements and get current streak
         new_streak_achievements, streak = check_streak_achievements(session['username'], cur)
-
-        # Optionally, fetch all achievements for display
         cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
         achievements = [{"name": r["achievement_name"], "unlocked_at": r["unlocked_at"]} for r in cur.fetchall()]
 
         conn.commit()
         conn.close()
 
-        # Combine all newly unlocked achievements for notification
         new_achievements = new_xp_achievements + new_streak_achievements
 
         print(f"Added {seconds}s and {xp_earned} XP to {session['username']} (new XP: {new_xp}, streak: {streak})")
@@ -276,7 +291,7 @@ def register_main_routes(app):
             "new_xp": new_xp,
             "streak": streak,
             "new_achievements": new_achievements,
-            "achievements": achievements  # for dashboard display
+            "achievements": achievements
         })
 
     @app.route("/analytics")
@@ -286,22 +301,32 @@ def register_main_routes(app):
             return redirect(url_for('login'))
         
         user = dbHandler.get_user(session['username'])
+        # Progress tracking per subject
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute("""
+            SELECT subject, SUM(seconds) as total_seconds
+            FROM study_sessions
+            WHERE username = ?
+            GROUP BY subject
+        """, (session['username'],))
+        subject_stats = cur.fetchall()
+        conn.close()
+
         stats = dbHandler.get_user_stats(user['username'])
         recent_logs = dbHandler.get_recent_logs(user['username'])
         top_projects = dbHandler.get_top_projects(user['username'])
         
-        return render_template("analytics.html", user=user, stats=stats, recent_logs=recent_logs, top_projects=top_projects)
+        return render_template("analytics.html", user=user, stats=stats, recent_logs=recent_logs, top_projects=top_projects, subject_stats=subject_stats)
 
     @app.route("/home_logged_in", methods=["GET"])
     def home_logged_in():
-        """Render the home page for logged-in users with leaderboard."""
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
 
         conn = get_db()
         cur = conn.cursor()
-        # Get top 10 users by total study time (in seconds)
         cur.execute("SELECT username, COALESCE(total_study_time, 0) as total_study_time FROM users ORDER BY total_study_time DESC LIMIT 10")
         leaderboard = [
             {"username": row["username"], "study_hours": round(row["total_study_time"] / 3600, 1)}
@@ -339,7 +364,7 @@ def register_main_routes(app):
         
         email = basic_sanitize_input(request.form["email"])
         new_username = basic_sanitize_input(request.form["username"])
-        new_password = request.form["password"]  # Password validation is done separately
+        new_password = request.form["password"]
         current_username = session['username']
         avatar = request.form.get("avatar", "🙂") 
         
@@ -351,7 +376,6 @@ def register_main_routes(app):
             if new_username != current_username and dbHandler.get_user(new_username):
                 username_error = "Username is already taken."
             
-            # Validate the new password if provided
             if new_password:
                 validation_result = validate_password(new_password)
                 if validation_result != "Password is valid.":
@@ -366,11 +390,11 @@ def register_main_routes(app):
             dbHandler.update_user_profile(current_username, email, new_username, hashed_password, avatar)
             if new_username != current_username:
                 flash("Username updated successfully.")
-                session['username'] = new_username  # Update session username if changed
+                session['username'] = new_username
             if new_password:
                 flash("Password updated successfully.")
             flash("Profile updated successfully.")
-            session['username'] = new_username  # Update session username if changed
+            session['username'] = new_username
         except ValueError as e:
             flash(f"Value error occurred: {e}")
         except KeyError as e:
@@ -381,7 +405,6 @@ def register_main_routes(app):
         return redirect(url_for('profile'))
 
     def check_and_unlock_achievements(username, xp, cur):
-        print(f"DEBUG: Checking achievements for {username} with XP {xp}")
         milestones = [
             (1, "First Steps"),
             (50, "Warming Up"),
@@ -398,7 +421,6 @@ def register_main_routes(app):
         for threshold, name in milestones:
             cur.execute("SELECT 1 FROM achievements WHERE username=? AND achievement_name=?", (username, name))
             if xp >= threshold and not cur.fetchone():
-                print(f"DEBUG: Unlocking {name} for {username} at {xp} XP")
                 cur.execute("INSERT INTO achievements (username, achievement_name) VALUES (?, ?)", (username, name))
                 unlocked.append(name)
         return unlocked
@@ -406,7 +428,7 @@ def register_main_routes(app):
     def get_study_streak(username,cur):
         streak = 0
         today = datetime.now().date()
-        for i in range(0, 100):  # check up to 100 days back
+        for i in range(0, 100):
             day = today - timedelta(days=i)
             cur.execute(
                 "SELECT 1 FROM study_sessions WHERE username=? AND date=?",
@@ -439,7 +461,9 @@ def register_main_routes(app):
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
-        return render_template("study_timer.html")
+        user_subjects = get_user_subjects(session['username'])
+        csrf_token = generate_csrf()
+        return render_template("study_timer.html", user_subjects=user_subjects,csrf_token=csrf_token) 
 
     @app.route("/achievements")
     def achievements():
@@ -447,7 +471,6 @@ def register_main_routes(app):
             flash("You need to log in first.")
             return redirect(url_for('login'))
 
-        # Define all possible achievements (add icons as you like)
         all_achievements = [
             {"name": "First Steps", "icon": "🎉", "threshold": 1},
             {"name": "Warming Up", "icon": "🔥", "threshold": 50},
@@ -461,7 +484,6 @@ def register_main_routes(app):
             {"name": "Ultimate Scholar", "icon": "🏆", "threshold": 10000},
         ]
 
-        # Fetch unlocked achievements
         conn = get_db()
         cur = conn.cursor()
         cur.execute("SELECT achievement_name, unlocked_at FROM achievements WHERE username=?", (session['username'],))
@@ -471,10 +493,8 @@ def register_main_routes(app):
         user_xp = user['xp'] if user else 0
         conn.close()
 
-        # Build dict for unlocked achievements
         user_achievements = {row['achievement_name']: {"unlocked_at": row['unlocked_at']} for row in unlocked}
 
-        # Add progress to each milestone
         for milestone in all_achievements:
             if milestone['name'] in user_achievements:
                 milestone['progress'] = 100
@@ -490,7 +510,6 @@ def register_main_routes(app):
 
     @app.route("/leaderboard")
     def leaderboard():
-        """Show the top 20 users by total study time and streak, with period filter."""
         if 'username' not in session:
             flash("You need to log in first.")
             return redirect(url_for('login'))
@@ -519,7 +538,7 @@ def register_main_routes(app):
                 ORDER BY study_seconds DESC
                 LIMIT 20
             """, (start_of_week,))
-        else:  # all time
+        else:
             cur.execute("""
                 SELECT username, COALESCE(total_study_time, 0) as study_seconds
                 FROM users

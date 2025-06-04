@@ -2,7 +2,7 @@
 
 ## **Backlog Tasks**
 
-### 🎨 UI Polish
+###  UI Polish
 - [X] Redesign layout for a modern, study-focused look and feel.
 - [X] Add dynamic dashboard elements:
   - Progress bars for XP and level.
@@ -12,12 +12,13 @@
 - [X] Improve accessibility (keyboard nav, contrast, alt text).
 - [X] Include custom favicon and app branding.
 
-### 🚀 Advanced Features
-- [ ] Add **daily challenges** with XP rewards.
+### Advanced Features
+- [X] Add **daily challenges** with XP rewards.
 - [ ] Build **progress tracking analytics** per topic or study goal.
 - [ ] Enable **profile customization** (themes, avatars).
 - [ ] Add **tooltips/tutorials** to onboard new users.
-- [ ] Introduce **dark mode** toggle.
+- [X] Introduce **dark mode** toggle.
+- [ ] Optional Idea -> Image of garden that changes as study session continues
 
 ## **Increment**
 

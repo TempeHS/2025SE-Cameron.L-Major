@@ -80,3 +80,13 @@
 --('Complete 3 study sessions', 40),
 --('Study for 15 minutes without pausing', 25),
 --('Log a study session with a note', 20);
+
+
+--CREATE TABLE IF NOT EXISTS subjects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    subject_name TEXT NOT NULL,
+    FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+--);
+
+--ALTER TABLE study_sessions ADD COLUMN subject TEXT;
