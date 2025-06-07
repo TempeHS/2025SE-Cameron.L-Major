@@ -294,30 +294,6 @@ def register_main_routes(app):
             "achievements": achievements
         })
 
-    @app.route("/analytics")
-    def analytics():
-        if 'username' not in session:
-            flash("You need to log in first.")
-            return redirect(url_for('login'))
-        
-        user = dbHandler.get_user(session['username'])
-        # Progress tracking per subject
-        conn = get_db()
-        cur = conn.cursor()
-        cur.execute("""
-            SELECT subject, SUM(seconds) as total_seconds
-            FROM study_sessions
-            WHERE username = ?
-            GROUP BY subject
-        """, (session['username'],))
-        subject_stats = cur.fetchall()
-        conn.close()
-
-        stats = dbHandler.get_user_stats(user['username'])
-        recent_logs = dbHandler.get_recent_logs(user['username'])
-        top_projects = dbHandler.get_top_projects(user['username'])
-        
-        return render_template("analytics.html", user=user, stats=stats, recent_logs=recent_logs, top_projects=top_projects, subject_stats=subject_stats)
 
     @app.route("/home_logged_in", methods=["GET"])
     def home_logged_in():

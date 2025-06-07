@@ -90,3 +90,19 @@
 --);
 
 --ALTER TABLE study_sessions ADD COLUMN subject TEXT;
+
+--CREATE TABLE IF NOT EXISTS password_resets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    token TEXT NOT NULL,
+    expires_at DATETIME NOT NULL
+--);
+
+--DROP TABLE IF EXISTS password_resets;
+
+--CREATE TABLE password_resets (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT NOT NULL,
+    token TEXT NOT NULL,
+    expiration DATETIME NOT NULL
+--);

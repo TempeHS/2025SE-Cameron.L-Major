@@ -206,7 +206,7 @@ def register_auth_routes(app):
                     token = secrets.token_urlsafe(16)
                     expiration = datetime.now() + timedelta(hours=1)
                     dbHandler.store_reset_token(email, token, expiration)
-                    reset_link = f'https://sturdy-carnival-qr5gr9qxr5xh9qpq.github.dev/reset_password?token={token}'
+                    reset_link = url_for('reset_password', token=token, _external=True)
                     msg = Message('Password Reset Request', sender='your-email@gmail.com', recipients=[email])
                     msg.body = f'Click the link to reset your password: {reset_link}'
                     mail.send(msg)
@@ -228,7 +228,19 @@ def register_auth_routes(app):
     def reset_password(token):
         try:
             reset = dbHandler.get_reset_token(token)
-            if not reset or datetime.now() > reset["expiration"]:
+            if not reset:
+                flash("Invalid or expired token.")
+                return redirect(url_for('forgot_password'))
+
+            # Parse expiration string to datetime
+            expiration = reset["expiration"]
+            from datetime import datetime
+            if isinstance(expiration, str):
+                try:
+                    expiration = datetime.fromisoformat(expiration)
+                except ValueError:
+                    expiration = datetime.strptime(expiration, "%Y-%m-%d %H:%M:%S")
+            if datetime.now() > expiration:
                 flash("Invalid or expired token.")
                 return redirect(url_for('forgot_password'))
 
@@ -260,7 +272,7 @@ def register_auth_routes(app):
             flash("A network error occurred. Please try again later.")
 
         return render_template("reset_password.html", token=token)
-
+        
     def log_user_login(username):
         conn = sqlite3.connect('.databaseFiles/database.db')
         cursor = conn.cursor()

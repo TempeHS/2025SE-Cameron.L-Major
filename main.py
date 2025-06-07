@@ -63,5 +63,6 @@ def set_csp(response):
 
 if __name__ == '__main__':
     app.config["TEMPLATES_AUTO_RELOAD"] = True
+    app.config['SERVER_NAME'] = 'https://expert-orbit-44p94g7rpjgcqvrr-5000.app.github.dev/'
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = 0
     app.run(debug=True, host="0.0.0.0", port=5000)

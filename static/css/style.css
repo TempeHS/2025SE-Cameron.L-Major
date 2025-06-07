@@ -234,7 +234,7 @@ a:focus, button:focus, .form-control:focus, select:focus {
   outline: 2px solid var(--accent);
 }
 
-/* Skip to content link (add to your HTML for best accessibility) */
+/* Skip to content link (add to HTML for best accessibility) */
 .skip-link {
   position: absolute;
   left: -999px;
@@ -281,3 +281,5 @@ html {
   clip: rect(0, 0, 0, 0) !important;
   border: 0 !important;
 }
+
+

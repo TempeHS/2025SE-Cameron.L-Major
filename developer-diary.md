@@ -175,5 +175,17 @@ Today I implemented the advanced daily challenges feature for GameStudy. I desig
 ---
 
 ## Developer Diary Entry #19
-**Title:** 
-**Date:** 
+**Title:** Finished Sprint 6
+**Date:** 4/06/25
+
+Sprint 6 concluded with the successful integration of daily challenges and further UI improvements. I finalized the backend logic for assigning and tracking daily challenges, ensuring users receive new, randomized challenges each day. I also polished the leaderboard and achievements pages for a more cohesive look and improved accessibility.
+
+---
+
+## Developer Diary Entry #20
+**Title:** Sprint 7 - Fixed Reset Password Feature and Code Cleanup  
+**Date:** 7/06/25
+
+Today I fixed the reset password feature, which previously had issues with token validation and password updates. I removed unnecessary or redundant code from both the backend and templates, resulting in a cleaner and more maintainable codebase. Minor UI tweaks were made to keep the app visually consistent. With these fixes, the password reset process is now reliable and the overall code quality has improved.
+
+---
