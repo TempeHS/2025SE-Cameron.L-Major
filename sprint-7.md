@@ -3,7 +3,7 @@
 ## **Backlog Tasks**
 
 ### Bug Fixes & QA
-- [ ] Fix light mode issue.
+- [X] Fix light mode issue.
 - [ ] Resolve layout shifts and spacing issues on smaller screens.
 - [ ] Address navigation bugs when user is not logged in.
 - [X] Ensure all interactive elements provide visual feedback.

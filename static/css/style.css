@@ -28,28 +28,6 @@
   --label: #fff;
 }
 
-[data-theme="light"] {
-  --bg: #f8fafc;
-  --card-bg: #e0e7ef;
-  --text: #22223b;
-  --navbar-bg: linear-gradient(90deg, #e0e7ef 0%, #10b981 100%);
-  --footer-bg: linear-gradient(90deg, #e0e7ef 0%, #10b981 100%);
-  --input-bg: #fff;
-  --input-border: #10b981;
-  --input-focus-bg: #e0e7ef;
-  --input-focus-text: #22223b;
-  --accent: #10b981;
-  --btn-primary-bg: #10b981;
-  --btn-primary-hover-bg: #6366f1;
-  --btn-primary-border: #10b981;
-  --btn-primary-hover-border: #6366f1;
-  --scrollbar-thumb: #10b981;
-  --scrollbar-track: #e0e7ef;
-  --shadow: 0 8px 32px rgba(16, 185, 129, 0.10);
-  --container-bg: rgba(224,231,239,0.97);
-  --label: #22223b;
-}
-
 body {
   font-family: "Poppins", "Roboto", Arial, sans-serif;
   background: var(--bg);
@@ -101,10 +79,6 @@ body {
   background: transparent;
 }
 
-[data-theme="light"] .navbar-nav .nav-item .nav-link {
-  color: var(--text) !important;
-  text-shadow: none;
-}
 
 .navbar-nav .nav-item .nav-link:hover,
 .navbar-nav .nav-item .nav-link:focus {
