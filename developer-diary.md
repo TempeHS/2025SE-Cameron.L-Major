@@ -194,13 +194,12 @@ Today I fixed the reset password feature, which previously had issues with token
 **Title:** Sprint 7 - Analytics Page Development 
 **Date:** 9/06/25
 
-Today I began developing the Analytics page for GameStudy. The goal is to provide users with real-time feedback on their study habits, including server status, session stats, and XP progress charts. 
-
+Today I finished developing the Analytics page for GameStudy. The goal is to provide users with real-time feedback on their study habits, including server status, session stats, and XP progress charts. I implemented interactive filtering for the XP charts, allowing users to view their study progress by day, week, or month. Both line and bar charts are now available, providing multiple visualizations of XP earned over time.The server status and user study stats now load dynamically and display in real time. Testing confirmed that all analytics features work as intended, with accurate filtering and responsive chart updates.
 ---
 
 ## Developer Diary Entry #21
-**Title:** Sprint 7 - Analytics Page Development 
-**Date:** 
+**Title:** 
+**Date:**
 
 
 ---
