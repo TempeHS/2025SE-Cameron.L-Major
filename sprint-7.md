@@ -4,7 +4,6 @@
 
 ### Bug Fixes & QA
 - [X] Fix light mode issue.
-- [ ] Resolve layout shifts and spacing issues on smaller screens.
 - [X] Address navigation bugs when user is not logged in.
 - [X] Ensure all interactive elements provide visual feedback.
 - [X] Clean up unused code and deprecated CSS.
@@ -15,7 +14,7 @@
   - Time spent studying.  
   - Current streak and historical performance.
 - [X] Use visual elements like charts or graphs (e.g. line charts, bar graphs).
-- [ ] Allow filtering by date range or activity type.
+- [X] Allow filtering by date range or activity type.
 - [X] Allow password changing through email
 
 ### Accessibility & Quality of Life
