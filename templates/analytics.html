@@ -1,84 +1,52 @@
-{% extends "layout.html" %} {% block title %} Detailed Analytics {% endblock %}
+{% extends "layout.html" %}
+{% block title %}Analytics{% endblock %}
 {% block content %}
-<div class="container mt-5">
-  <h1>Detailed Analytics</h1>
+<div id="analytics-container" class="container mt-5" data-username="{{ username }}">
+  <h1 style="color:#10b981;">Analytics</h1>
 
-  <!-- User Activity Summary -->
-  <div class="card mb-4">
-    <div class="card-header">User Activity Summary</div>
-    <div class="card-body">
-      <p><strong>Number of Logins:</strong> {{ stats.num_logins }}</p>
-      <p><strong>Number of Logs Created:</strong> {{ stats.num_logs }}</p>
+  <!-- Server Status -->
+  <div class="card mb-4 bg-dark text-light border-secondary">
+    <div class="card-header bg-dark text-light border-secondary" style="color:#a5b4fc;">Server Status</div>
+    <div class="card-body" id="server-status">
+      <span>Loading server status...</span>
     </div>
   </div>
 
-  <!-- Recent Activity Trends -->
-  <div class="card mb-4">
-    <div class="card-header">Recent Activity Trends</div>
-    <div class="card-body">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th scope="col">Project</th>
-            <th scope="col">Number of Logs</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for project, count in stats.activity_trends %}
-          <tr>
-            <td>{{ project }}</td>
-            <td>{{ count }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-  <!-- Recent Logs -->
-  <div class="card mb-4">
-    <div class="card-header">Recent Logs</div>
-    <div class="card-body">
-      <ul class="list-group">
-        {% for log in recent_logs %}
-        <li class="list-group-item">
-          <strong>{{ log.date }} - {{ log.project }}</strong><br />
-          {{ log.content }}
+  <!-- User Study Stats -->
+  <div class="card mb-4 bg-dark text-light border-secondary">
+    <div class="card-header bg-dark text-light border-secondary" style="color:#a5b4fc;">Your Study Stats</div>
+    <div class="card-body" id="user-stats">
+      <ul class="list-group bg-dark rounded mb-3" style="margin-bottom:0;">
+        <li class="list-group-item bg-dark text-light border-secondary">
+          <strong>Total Study Sessions:</strong> <span id="total-sessions">Loading...</span>
         </li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  <!-- Top Projects -->
-  <div class="card mb-4">
-    <div class="card-header">Top Projects</div>
-    <div class="card-body">
-      <ul class="list-group">
-        {% for project, count in top_projects %}
-        <li class="list-group-item">
-          <strong>{{ project }}</strong> - {{ count }} logs
+        <li class="list-group-item bg-dark text-light border-secondary">
+          <strong>Average XP per Session:</strong> <span id="average-xp">Loading...</span>
         </li>
-        {% endfor %}
       </ul>
+      <div>
+        <strong>Recent Sessions:</strong>
+        <ul id="recent-sessions" class="list-group bg-dark rounded mt-2"></ul>
+      </div>
     </div>
   </div>
 
-  <!-- Shareable API Link -->
-  <div class="card mb-4">
-    <div class="card-header">Shareable API Link</div>
+  <!-- Charts Section -->
+  <div class="mb-3">
+    <button class="btn btn-outline-info btn-sm me-2" id="filter-day">Day</button>
+    <button class="btn btn-outline-info btn-sm me-2" id="filter-week">Week</button>
+    <button class="btn btn-outline-info btn-sm" id="filter-month">Month</button>
+  </div>
+  <div class="card mb-4 bg-dark text-light border-secondary">
+    <div class="card-header bg-dark text-light border-secondary" style="color:#a5b4fc;">Study Progress (Charts)</div>
     <div class="card-body">
-      <label for="shareableLink">Shareable Link:</label>
-      <input
-        type="text"
-        id="shareableLink"
-        class="form-control"
-        value="https://sturdy-carnival-qr5gr9qxr5xh9qpq-5000.app.github.dev//api/user_stats?username={{ user.username }}"
-        readonly
-      />
+      <canvas id="xpChart" height="100"></canvas>
+      <canvas id="xpBarChart" height="100" class="mt-4"></canvas>
+      <div id="no-xp-data" class="text-warning mt-2" style="display:none;">No XP data available for chart.</div>
     </div>
   </div>
-
-  <!-- Add more detailed analytics sections as needed -->
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
 {% endblock %}

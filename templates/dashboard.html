@@ -66,7 +66,6 @@
         <h3 style="color:#a5b4fc;">Navigation</h3>
         <ul class="list-group bg-dark rounded">
           <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/profile">Profile</a></li>
-          <li class="list-group-item bg-dark text-light border-secondary"><a class="text-success" href="/settings">Settings</a></li>
           <li class="list-group-item bg-dark text-light border-secondary">
             <a class="text-success" href="{{ url_for('study_timer') }}">Study Timer</a>
           </li>
@@ -80,7 +79,11 @@
     <!-- Study Stats & Achievements -->
     <div class="col-lg-4">
       <div class="bg-dark rounded shadow p-3 h-100">
-        <h3 style="color:#a5b4fc;">Study Stats</h3>
+        <h3 style="color:#a5b4fc;">
+          <a href="{{ url_for('analytics') }}" style="color:#a5b4fc; text-decoration: underline; cursor: pointer;">
+            Study Stats
+          </a>
+        </h3>
         <ul class="list-group bg-dark rounded mb-3">
           <li class="list-group-item bg-dark text-light border-secondary">
             <strong>Total Study Time:</strong> {{ study_hours }} hour{% if study_hours != 1 %}s{% endif %} and {{ study_minutes }} minute{% if study_minutes != 1 %}s{% endif %}

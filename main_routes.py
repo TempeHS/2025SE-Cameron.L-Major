@@ -556,3 +556,10 @@ def register_main_routes(app):
             period=period,
             session=session
         )
+
+    @app.route("/analytics")
+    def analytics():
+        if 'username' not in session:
+            flash("You need to log in first.")
+            return redirect(url_for('login'))
+        return render_template("analytics.html", username=session['username'])

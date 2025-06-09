@@ -210,7 +210,7 @@ def register_auth_routes(app):
                     msg = Message('Password Reset Request', sender='your-email@gmail.com', recipients=[email])
                     msg.body = f'Click the link to reset your password: {reset_link}'
                     mail.send(msg)
-                    flash("Password reset link has been sent to your email.")
+                    flash("Password reset link has been sent to your email. Please wait up to 5 minutes")
                 else:
                     flash("Email not found.")
             except sqlite3.Error as e:

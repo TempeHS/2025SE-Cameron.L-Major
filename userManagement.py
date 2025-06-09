@@ -161,3 +161,42 @@ def update_user_profile(current_username, new_email, new_username, new_password,
     except sqlite3.Error as e:
         raise DatabaseError(f"Database error: {e}") from e
 
+def get_user_game_stats(username):
+    """Return stats for the user's study sessions and XP over time."""
+    conn = sqlite3.connect('.databaseFiles/database.db')
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    # Total sessions
+    cur.execute("SELECT COUNT(*) FROM study_sessions WHERE username = ?", (username,))
+    total_sessions = cur.fetchone()[0]
+
+    # Average XP (average seconds per session, or adjust if you have a real XP column)
+    cur.execute("SELECT AVG(seconds) FROM study_sessions WHERE username = ?", (username,))
+    average_xp = cur.fetchone()[0] or 0
+
+    # Recent sessions (last 10)
+    cur.execute("SELECT date, seconds FROM study_sessions WHERE username = ? ORDER BY date DESC LIMIT 10", (username,))
+    recent_sessions = [{"date": row["date"], "xp": row["seconds"]} for row in cur.fetchall()]
+
+    # XP over time (sum XP per day)
+    cur.execute("""
+        SELECT date, SUM(seconds)/60 as xp
+        FROM study_sessions
+        WHERE username = ?
+        GROUP BY date
+        ORDER BY date ASC
+        """, (username,))
+    xp_data = cur.fetchall()
+    xp_over_time = {
+        "dates": [row["date"] for row in xp_data],
+        "values": [row["xp"] for row in xp_data]
+    }
+
+    conn.close()
+    return {
+        "total_sessions": total_sessions,
+        "average_xp": round(average_xp, 2),
+        "recent_sessions": recent_sessions,
+        "xp_over_time": xp_over_time
+    }

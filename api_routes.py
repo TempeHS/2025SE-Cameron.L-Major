@@ -52,10 +52,11 @@ class UserGameStats(Resource):
             logger.debug("User game stats: %s", stats)
             data = {
                 "total_sessions": stats.get('total_sessions', 0),
-                "average_score": stats.get('average_score', 0),
-                "recent_games": stats.get('recent_games', [])
+                "average_xp": stats.get('average_xp', 0),
+                "recent_sessions": stats.get('recent_sessions', []),
+                "xp_over_time": stats.get('xp_over_time', {})
             }
-            logger.debug("Returning user game stats: %s", data)
+            logger.debug("Returning user study stats: %s", data)
             return jsonify(data)
         else:
             logger.debug("User not found: %s", username)

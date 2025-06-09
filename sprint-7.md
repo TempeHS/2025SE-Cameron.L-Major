@@ -5,28 +5,24 @@
 ### Bug Fixes & QA
 - [X] Fix light mode issue.
 - [ ] Resolve layout shifts and spacing issues on smaller screens.
-- [ ] Address navigation bugs when user is not logged in.
+- [X] Address navigation bugs when user is not logged in.
 - [X] Ensure all interactive elements provide visual feedback.
 - [X] Clean up unused code and deprecated CSS.
 
 ### Optional Stats & Analytics Page and Forgot Password Feature
-- [ ] Create a dedicated **Stats Page** showing:
+- [X] Create a dedicated **Stats Page** showing:
   - XP earned over time (weekly/monthly).
-  - Time spent studying.
-  - Completed challenges and badges.
+  - Time spent studying.  
   - Current streak and historical performance.
-- [ ] Use visual elements like charts or graphs (e.g. line charts, bar graphs).
+- [X] Use visual elements like charts or graphs (e.g. line charts, bar graphs).
 - [ ] Allow filtering by date range or activity type.
 - [X] Allow password changing through email
 
 ### Accessibility & Quality of Life
-- [ ] Ensure keyboard navigability across all pages.
-- [ ] Add alt text for all icons and images.
-- [ ] Use ARIA labels and semantic HTML where appropriate.
-- [ ] Increase color contrast for readability in both light and dark modes.
-- [ ] Improve focus states and screen reader support.
-- [ ] Enable user preference memory (e.g. dark mode, nav state).
-- [ ] Audit the site using tools like Lighthouse or WAVE.
+- [X] Ensure keyboard navigability across all pages.
+- [X] Use ARIA labels and semantic HTML where appropriate.
+- [X] Increase color contrast for readability in both light and dark modes.
+- [X] Improve focus states and screen reader support.
 
 ## **Increment**
 

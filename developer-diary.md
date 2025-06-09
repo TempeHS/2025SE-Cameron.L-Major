@@ -189,3 +189,18 @@ Sprint 6 concluded with the successful integration of daily challenges and furth
 Today I fixed the reset password feature, which previously had issues with token validation and password updates. I removed unnecessary or redundant code from both the backend and templates, resulting in a cleaner and more maintainable codebase. Minor UI tweaks were made to keep the app visually consistent. With these fixes, the password reset process is now reliable and the overall code quality has improved.
 
 ---
+
+## Developer Diary Entry #20
+**Title:** Sprint 7 - Analytics Page Development 
+**Date:** 9/06/25
+
+Today I began developing the Analytics page for GameStudy. The goal is to provide users with real-time feedback on their study habits, including server status, session stats, and XP progress charts. 
+
+---
+
+## Developer Diary Entry #21
+**Title:** Sprint 7 - Analytics Page Development 
+**Date:** 
+
+
+---
