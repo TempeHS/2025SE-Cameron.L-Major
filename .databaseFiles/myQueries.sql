@@ -106,3 +106,4 @@
     token TEXT NOT NULL,
     expiration DATETIME NOT NULL
 --);
+

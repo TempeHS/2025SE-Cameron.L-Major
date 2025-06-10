@@ -8,6 +8,13 @@ import sqlite3
 import os
 import random
 
+def get_user_id(username, conn):
+    cur = conn.cursor()
+    cur.execute("SELECT id FROM users WHERE username = ?", (username,))
+    row = cur.fetchone()
+    return row[0] if row else None
+
+
 def register_main_routes(app):
     def get_db():
         db_path = '.databaseFiles/database.db'
@@ -65,11 +72,6 @@ def register_main_routes(app):
             )
         conn.commit()
 
-    def get_user_id(username, conn):
-        cur = conn.cursor()
-        cur.execute("SELECT id FROM users WHERE username = ?", (username,))
-        row = cur.fetchone()
-        return row['id'] if row else None
 
     @app.route("/", methods=["GET"])
     @app.route("/index.html", methods=["GET"])
@@ -563,3 +565,26 @@ def register_main_routes(app):
             flash("You need to log in first.")
             return redirect(url_for('login'))
         return render_template("analytics.html", username=session['username'])
+
+def complete_login_challenge(user_id, conn):
+    today = date.today().isoformat()
+    cur = conn.cursor()
+    # Get the ID for the "Log in today" challenge
+    cur.execute("SELECT id FROM challenges WHERE description = 'Log in today'")
+    row = cur.fetchone()
+    if not row:
+        return
+    log_in_challenge_id = row[0]
+    # Check if assigned today
+    cur.execute("""
+        SELECT * FROM user_daily_challenges
+        WHERE user_id=? AND challenge_id=? AND date=?
+    """, (user_id, log_in_challenge_id, today))
+    if cur.fetchone():
+        # Mark as completed (assuming a 'completed' column)
+        cur.execute("""
+            UPDATE user_daily_challenges
+            SET completed=1
+            WHERE user_id=? AND challenge_id=? AND date=?
+        """, (user_id, log_in_challenge_id, today))
+        conn.commit()
