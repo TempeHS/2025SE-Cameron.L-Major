@@ -199,8 +199,15 @@ Today I finished developing the Analytics page for GameStudy. The goal is to pro
 ---
 
 ## Developer Diary Entry #21
-**Title:** Sprint 8 - Code Cleanup and Bug Fixes
+**Title:** Sprint 8 - Updated ReadME
 **Date:** 10/06/25
 
+Today I had updated the README to include the following:
+- Agile Sprint Summary
+- Project Report URL
+- Installation and Setup Guide
+- User Guide to log in
+- Final GANTT Chart Link
+- Security Features
 
 ---
