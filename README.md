@@ -20,9 +20,7 @@ This app allows users to:
 
 ## Final Gantt Chart
 
-> **Note:** Replace the placeholder below with your actual Gantt chart when available.
-
-![Gantt Chart](path/to/gantt-chart-placeholder.png)
+![Final Gantt Chart](static/images/finalgantt.png)
 
 ---
 
