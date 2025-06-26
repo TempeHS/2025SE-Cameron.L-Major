@@ -27,7 +27,7 @@ This app allows users to:
 ## Project Report
 
 View the full project report here:  
-[Project Report PDF (placeholder)](path/to/project-report.pdf)
+[Project Report PDF](GameStudy_Report.pdf)
 
 ---
 
@@ -72,7 +72,8 @@ This app uses **Two-Factor Authentication (2FA)** for secure login. Follow these
 
 1. Open the app and go to the **Sign Up** page.  
    ![Sign Up Page](static/images/signup.png)
-2. Fill in your desired **username**, **email**, and **password**.  
+2. Fill in your desired **username**, **email**, and **password**.
+   - Note the password should be between 8-12 characters, have atleast one uppercase, lowercase letter, special character and digit. 
 3. Submit the form to create your account.  
 4. A **QR code** will be displayed — scan this with your **Google Authenticator** app.
    ![QR Code Example](static/images/qr_code_example.png)
