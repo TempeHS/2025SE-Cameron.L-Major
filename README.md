@@ -27,7 +27,7 @@ This app allows users to:
 ## Project Report
 
 View the full project report here:  
-[Project Report PDF](GameStudy_Report.pdf)
+[Project Report PDF](gamereport.pdf)
 
 ---
 
