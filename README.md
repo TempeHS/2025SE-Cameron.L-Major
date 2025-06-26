@@ -16,6 +16,29 @@ This app allows users to:
 - Securely manage accounts with Two-Factor Authentication (2FA)  
 - View progress with a fun, gamified interface
 
+Functional Requirements:
+- User Authentication: Users can register, log in, and log out securely. Two-factor authentication (2FA) via Google Authenticator is implemented.
+
+- Password Recovery: Users can request a password reset link via email. Reset tokens expire after a limited time.
+
+- Study Timer: Users can start, pause, and reset study sessions. Study time is tracked and saved in real time.
+
+- Experience Points (XP) System: XP is awarded based on study time. Achievements unlock when XP thresholds are met.
+
+- Leaderboard: Users are ranked based on XP for today, this week, and all-time. Podium system highlights top users.
+
+- Security: All sensitive data is securely hashed and stored. Input validation and sanitization to prevent injection attacks.
+
+Non-Functional Requirements:
+- The system should respond to user actions within 2 seconds. Study time and leaderboard updates happen in real time.
+
+- The app should operate continuously without crashes during normal use. Data integrity must be maintained even under concurrent user access.
+
+- The interface is intuitive and easy to navigate for target users. Responsive design to support desktop, tablet, and mobile devices.
+
+- Use of strong password hashing and session management. Protection against common web vulnerabilities (SQL injection, XSS, CSRF).
+
+- Codebase is modular and well-documented for future enhancements. Use of reusable components and clear separation of concerns.
 ---
 
 ## Final Gantt Chart
@@ -24,10 +47,9 @@ This app allows users to:
 
 ---
 
-## Project Report
+## Documentation: Project Report
 
-View the full project report here:  
-[Project Report PDF](gamereport.pdf)
+[Project Report PDF](.pdf)
 
 ---
 
@@ -94,12 +116,12 @@ This app uses **Two-Factor Authentication (2FA)** for secure login. Follow these
 
 ---
 
-## Security Features
-
-- **CSRF Protection** for all forms  
-- **Brute Force Mitigation** to prevent login attacks  
-- **Two-Factor Authentication (2FA)** using Google Authenticator  
-- **Secure Password Storage** with hashing  
-- **Input Validation & XSS Prevention**  
+## Acknowledgements
+- https://github.com/cameronly08/HSCTask1-Cameron.Ly
+- https://github.com/TempeHS/Secure_Flask_PWA_Template
+- https://www.chartjs.org/
+- https://getbootstrap.com/
+- https://webdesign.tutsplus.com/create-a-pomodoro-timer-with-html-css-and-vanilla-javascript--cms-108069t
 
 ---
+
