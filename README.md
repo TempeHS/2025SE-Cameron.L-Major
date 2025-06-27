@@ -47,8 +47,8 @@ Non-Functional Requirements:
 
 ---
 
-## Documentation: Project Report
-
+## Documentation: Project Report 
+- Download the project report for the full pdf.
 [Project Report PDF](documentation/GameStudy_Report.pdf)
 ---
 
