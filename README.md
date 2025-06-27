@@ -49,8 +49,7 @@ Non-Functional Requirements:
 
 ## Documentation: Project Report
 
-[Project Report PDF](.pdf)
-
+[Project Report PDF](documentation/GameStudy_Report.pdf)
 ---
 
 ## Agile Sprints Summary
